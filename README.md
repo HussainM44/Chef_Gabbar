@@ -4,8 +4,10 @@ The app allows managers to efficiently manage menus and orders, while customers 
 
 ---
 
-## ERD / Data Model 📊
-You can view the diagram here: [ERD](https://lucid.app/lucidchart/aab0347b-cb1d-4a92-afec-bb63e4ac6153/edit?view_items=._4otyTkbROA%2ChO4cGYu40Lz~%2C-U4c.53W_xNf%2ChO4cXgo6ivxc%2ChO4clz7A~m.v%2ChO4cjO.w7w3L%2C134cFy0ZNlOg%2C8J4oLeLXRS1H%2CT24cFMOl7xwO%2CQY4cRIuti9Tw%2CGZ4cJ2fVX7Ck%2CYc5oHkrA_nef%2C4c5o3WUNBUU~&page=0_0&invitationId=inv_78a95d3c-ec75-4ca3-a59b-32c7f33771cf)
+## Getting Started 📊
+You can view the diagram here:  [ERD](https://lucid.app/lucidchart/aab0347b-cb1d-4a92-afec-bb63e4ac6153/edit?view_items=._4otyTkbROA%2ChO4cGYu40Lz~%2C-U4c.53W_xNf%2ChO4cXgo6ivxc%2ChO4clz7A~m.v%2ChO4cjO.w7w3L%2C134cFy0ZNlOg%2C8J4oLeLXRS1H%2CT24cFMOl7xwO%2CQY4cRIuti9Tw%2CGZ4cJ2fVX7Ck%2CYc5oHkrA_nef%2C4c5o3WUNBUU~&page=0_0&invitationId=inv_78a95d3c-ec75-4ca3-a59b-32c7f33771cf)
+
+You can view the Brainstorming here:  [Trello]([https://trello.com/invite/b/696faf43fb0b26df78a90f92/ATTIab4824791fc3732405eaeb251d0b2f0dF126CDAA/chef-gabbar](https://trello.com/b/rFQjyqjc/chef-gabbar))
 
 ---
 
