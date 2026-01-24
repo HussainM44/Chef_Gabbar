@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% if user.profile.is_authenticated %}
 <h1>Profile</h1>
 <hr>
 <h2> Personal details</h2>
@@ -19,5 +20,7 @@
 <li>
   <a href= "{% url 'user_update' user.id %}">Edit Profile</a>
 </li>
-
+{% else %}
+<h3>{{object.username}} has no Profile </h3>
+{% endif %}
 {% endblock %}
