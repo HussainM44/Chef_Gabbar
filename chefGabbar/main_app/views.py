@@ -120,14 +120,37 @@ class MenuCreate(CreateView):
 # return reverse('url_name(where id is needed)', kwarg = {"user_id or pk(whatever called in url)":self.object.pk(calling the id of the self)})
     def get_success_url(self):
         return reverse("dish_create" , kwargs={'pk': self.object.pk})
+    def get_success_url(self):
+        return reverse("dish_delete" , kwargs={'menu_id': self.object.pk})
 
 class DishCreate(CreateView):
     model = Dish
     fields =['name', 'description', 'dish_image']
     success_url = "/menu/list/"
+
     def form_valid(self, form):
         # this automatically receives the id from the get_success_url
         menu = Menu.objects.get(pk = self.kwargs['pk'])
         form.instance.menu = menu
         return super().form_valid(form)
+
+class DishCreate(CreateView):
+    model = Dish
+    fields =['name', 'description', 'dish_image']
+    success_url = "/menu/list/"
+
+    def form_valid(self, form):
+        # this automatically receives the id from the get_success_url
+        menu = Menu.objects.get(pk = self.kwargs['pk'])
+        form.instance.menu = menu
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("dish_delete", kwargs={'dish_id': self.object.pk})
+
+
+class DishDelete(DeleteView):
+    model = Dish
+    success_url = "/menu/list/"
+
 
