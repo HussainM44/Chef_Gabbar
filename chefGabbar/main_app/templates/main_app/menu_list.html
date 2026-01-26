@@ -1,19 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content%}
-<h1>
 
-{% for menu in menu_list%}
-{{menu.cuisine}}
-</h1>
-<li>
-{% for dish in menu.dish_set.all%}
-<p>
-{{dish.name}} - {{dish.description}}
-</p>
+{% for menu in menu_list %}
+<h1>{{menu.cuisine}}</h1>
+{% for dish in menu.dish_set.all %}
+<p>{{dish.name}} - {{dish.description}} </p>
 {% endfor %}
-</li>
 {% endfor %}
-
 
 {%endblock%}

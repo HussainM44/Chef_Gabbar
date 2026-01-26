@@ -105,28 +105,21 @@ def userUpdate(request, user_id):
 class MenuList(ListView):
     model = Menu
 
-def menuCreate(request , user_id):
-    user = User.objects.get(id = user_id)
+class MenuCreate(CreateView):
+    model = Menu
+    fields = [ 'cuisine']
+    success_url = "/menu/list/"
+    # this is adding user in menu manually that is logged in
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
-    if request.method == "POST":
-        menu_form = menuCreateForm(request.POST , instance = user)
+# class DishCreate(CreateView):
+#     model = Dish
+#     fields =['name', 'description', 'dish_image']
+#     success_url = "/menu/list/"
+#     def form_valid(self, form):
+#         form.instance.menu = self.request.menu
+#         return super().form_valid(form)
 
-        if menu_form.is_valid():
-            menu = menu_form.save(commit=False)
-            menu.user = user
-            menu.save()
-            if menu.save():
-                dish_form = dishCreateForm(request.POST)
 
-                dish = dish_form.save(commit=False)
-                dish.menu = dish
-                dish.save()
-                error_message = "invalid dish"
-            return redirect('/menu/list/')
-        else:
-            error_message = "Invalid Info - Try again"
-    else:
-        menu_form = menuCreateForm()
-        dish_form = dishCreateForm()
-        error_message = None
-    return render(request , "main_app/menuCreate.html", {"menu_form":menuCreateForm , "dish_form":dishCreateForm, "error_message":error_message})

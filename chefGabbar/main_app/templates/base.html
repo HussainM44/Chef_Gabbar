@@ -16,7 +16,7 @@
 
         <a href={% url 'profile' user.id %}>Profile</a>
                 <a href="{% url 'menu_list' %}">Menu </a>
-                <a href="{% url 'menu_create' user.id %}">Create Your Menu </a>
+                <a href="{% url 'menu_create' %}">Create Your Menu </a>
 
         <form method='post' action='{% url 'logout' %}'>
           {% csrf_token %}
