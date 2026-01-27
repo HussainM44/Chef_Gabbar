@@ -16,8 +16,7 @@
 {%endif%}
 
 {% endfor %}
-</br>
-</br>
+
 {% if user.is_superuser %}
 <a href = "{% url 'dish_create' menu.pk %}">Add A Dish</a>
 <br>

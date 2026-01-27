@@ -12,6 +12,8 @@
       {% endfor %}
     </ul>
 <p>Service Type: {{order.get_service_type_display}}</p>
+{{order.get_status_display}}
+
 <form method="POST" action ="{% url 'status_update' order.id %}">
   {% csrf_token %}
   {{form.as_p}}
