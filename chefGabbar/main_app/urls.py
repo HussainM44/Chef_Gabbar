@@ -24,5 +24,6 @@ urlpatterns = [
 
     # Order List for Manager
     path('order/list/', views.OrderList.as_view(),name = 'order_list'),
-    
+    path('order/<int:order_id>/update/', views.statusUpdate, name = 'status_update'),
+
 ]

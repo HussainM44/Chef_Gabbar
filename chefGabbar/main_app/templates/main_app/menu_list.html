@@ -9,7 +9,7 @@
 {% for menu in menu_list %}
 <h1>{{menu.cuisine}}</h1>
 {% for dish in menu.dish_set.all %}
-<p>{{dish.name}} - {{dish.price}} $ - {{dish.description}} </p>
+<p>{{dish.name}} - {{dish.price}} BHD - {{dish.description}} </p>
 <a href= "{% url 'dish_delete' dish.pk %}">Delete {{dish.name}}</a>
 <a href= "{% url 'dish_update' dish.pk %}">Update {{dish.name}}</a>
 {% endfor %}

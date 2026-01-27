@@ -16,6 +16,13 @@ SERVICES = (
     ("T","Take Away"),
     )
 
+STATUS = (
+    ('C','Cooking'),
+    ('R', "Ready To Go"),
+    ('D','Delivered'),
+    ('F','Finished'),
+    )
+
 # User Auth
 
 class Profile(models.Model):
@@ -41,7 +48,7 @@ class Dish(models.Model):
     menu = models.ForeignKey(Menu , on_delete=models.CASCADE)
     name = models.CharField(max_length=20)
     description = models.TextField(max_length=100)
-    price = models.IntegerField()
+    price = models.DecimalField( max_digits=3 ,decimal_places=1)
     dish_image = models.ImageField(upload_to="main_app/static/uploads", default= "")
 
     def __str__(self):
@@ -52,10 +59,17 @@ class Order(models.Model):
     user = models.ForeignKey(User , on_delete=models.CASCADE)
     item = models.ManyToManyField(Dish)
     service_type = models.CharField(max_length= 1 , choices= SERVICES , default=[0][0] )
+    status = models.CharField(max_length=1 , choices=STATUS , default=[0][0])
+    def total_price(self):
+        total = 0
+        for dish in self.item.all():
+            total += dish.price
+        return total
 
     def __str__(self):
         for dish in self.item.all():
             items = dish.name
-            total = 0
-            total += dish.price
-            return f"{self.user.username} ordered: {dish} for {total}"
+        return f"{self.user.username} ordered: {items}"
+
+
+

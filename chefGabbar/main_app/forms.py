@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from .models import Profile , Menu , Dish
+from .models import Profile , Menu , Dish , Order
 from django.contrib.auth.models import User
 
 
@@ -15,12 +15,7 @@ class userUpdateForm(ModelForm):
         model = User
         fields = ["username", "email"]
 
-class menuCreateForm(ModelForm):
+class orderStatusChange(ModelForm):
     class Meta:
-        model = Menu
-        fields = ['cuisine']
-
-class dishCreateForm(ModelForm):
-    class Meta:
-        model = Dish
-        fields = ['name','description', 'dish_image']
+        model = Order
+        fields = ['status']

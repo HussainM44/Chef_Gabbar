@@ -1,16 +1,24 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-{% for order in order_list %}
 <h1>Order list </h1>
+{% for order in order_list %}
+
 <h3>Order from: {{order.user.username}}</h3>
-<h4>Cart:
-{% for item in order.item.all %}
-{{item.name}} ({{item.price}} $),
-{% endfor %} </h4>
+    <h4>Cart:</h4>
+    <ul>
+      {% for item in order.item.all %}
+        <li>{{ item.name }} ({{ item.price }} BHD)</li>
+      {% endfor %}
+    </ul>
 <p>Service Type: {{order.get_service_type_display}}</p>
-Total = {order.}
+<form method="POST" action ="{% url 'status_update' order.id %}">
+  {% csrf_token %}
+  {{form.as_p}}
+  <input type="submit" value="Change Status">
+</form>
+
+<p>Total = {{order.total_price}} BHD </p>
 {% endfor %}
 
 {% endblock %}

@@ -6,7 +6,7 @@ from .models import Profile , Menu , Dish , Order
 from django.contrib.auth import login
 # to update the auth session of the same user
 from django.contrib.auth import update_session_auth_hash
-from .forms import profileForm, userUpdateForm , menuCreateForm , dishCreateForm
+from .forms import profileForm, userUpdateForm , orderStatusChange
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from django.urls import reverse
@@ -144,7 +144,7 @@ class DishDelete(DeleteView):
 
 class DishUpdate(UpdateView):
     model = Dish
-    fields = ['name', 'description','dish_image']
+    fields = ['name', 'price', 'description','dish_image']
     success_url = "/menu/list/"
 
 
@@ -152,3 +152,17 @@ class DishUpdate(UpdateView):
 
 class OrderList(ListView):
     model = Order
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form']=orderStatusChange()
+        return context
+
+def statusUpdate(request , order_id):
+    order = Order.objects.get(id = order_id)
+    if request.method == "POST":
+        form = orderStatusChange(request.POST, instance=order)
+        if form.is_valid():
+            form.save()
+            return redirect("order_list")
+
+    return redirect("order_list")
