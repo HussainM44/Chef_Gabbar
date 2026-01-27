@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% for order in order_list %}
+<h1>Order list </h1>
+<h3>Order from: {{order.user.username}}</h3>
+<h4>Cart:
+{% for item in order.item.all %}
+{{item.name}} ({{item.price}} $),
+{% endfor %} </h4>
+<p>Service Type: {{order.get_service_type_display}}</p>
+Total = {order.}
+{% endfor %}
+
+{% endblock %}

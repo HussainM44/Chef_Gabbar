@@ -41,6 +41,7 @@ class Dish(models.Model):
     menu = models.ForeignKey(Menu , on_delete=models.CASCADE)
     name = models.CharField(max_length=20)
     description = models.TextField(max_length=100)
+    price = models.IntegerField()
     dish_image = models.ImageField(upload_to="main_app/static/uploads", default= "")
 
     def __str__(self):
@@ -55,4 +56,6 @@ class Order(models.Model):
     def __str__(self):
         for dish in self.item.all():
             items = dish.name
-            return f"{self.user.username} ordered: {items}"
+            total = 0
+            total += dish.price
+            return f"{self.user.username} ordered: {dish} for {total}"

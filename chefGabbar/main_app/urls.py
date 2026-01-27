@@ -22,4 +22,7 @@ urlpatterns = [
     path('dish/<int:pk>/delete/', views.DishDelete.as_view(), name = "dish_delete"),
     path('dish/<int:pk>/update/', views.DishUpdate.as_view(), name = "dish_update"),
 
+    # Order List for Manager
+    path('order/list/', views.OrderList.as_view(),name = 'order_list'),
+    
 ]

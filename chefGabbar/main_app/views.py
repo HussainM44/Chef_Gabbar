@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm , PasswordChangeForm
 from django.contrib.auth.models import User
-from .models import Profile , Menu , Dish
+from .models import Profile , Menu , Dish , Order
 # to log in new user and create a auth session
 from django.contrib.auth import login
 # to update the auth session of the same user
@@ -146,3 +146,9 @@ class DishUpdate(UpdateView):
     model = Dish
     fields = ['name', 'description','dish_image']
     success_url = "/menu/list/"
+
+
+# Order for Manager
+
+class OrderList(ListView):
+    model = Order
