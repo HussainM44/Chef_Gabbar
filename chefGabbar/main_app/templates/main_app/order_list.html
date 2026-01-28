@@ -38,6 +38,7 @@
 
 
 {% endfor %}
+
 <p>Total = {{order.total_price}} BHD </p>
 
 <p>{{order.get_service_type_display}}
@@ -46,6 +47,13 @@
   {{service_form.as_p}}
   <input type="submit" value="Submit">
 </form>
+
+{% if order.item.count == 0 %}
+<h3>Nothing Added in Cart</h3>
+<h5>To Add to Cart</h5>
+<a href="{% url 'menu_list' %}">Checkout Our Menu</a>
+{% endif %}
+
 {% endif %}
 {% endfor %}
 
