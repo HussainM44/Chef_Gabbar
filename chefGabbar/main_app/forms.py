@@ -19,3 +19,9 @@ class orderStatusChange(ModelForm):
     class Meta:
         model = Order
         fields = ['status']
+
+
+class serviceTypeForm(ModelForm):
+    class Meta:
+        model = Order
+        fields = ['service_type']

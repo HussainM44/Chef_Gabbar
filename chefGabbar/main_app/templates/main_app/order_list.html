@@ -39,6 +39,13 @@
 
 {% endfor %}
 <p>Total = {{order.total_price}} BHD </p>
+
+<p>{{order.get_service_type_display}}
+<form method="POST" action ="{% url 'status_update' order.id %}">
+  {% csrf_token %}
+  {{service_form.as_p}}
+  <input type="submit" value="Submit">
+</form>
 {% endif %}
 {% endfor %}
 

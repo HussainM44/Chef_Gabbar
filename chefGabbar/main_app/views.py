@@ -12,7 +12,7 @@ from django.contrib.auth import login
 
 # to update the auth session of the same user
 from django.contrib.auth import update_session_auth_hash
-from .forms import profileForm, userUpdateForm, orderStatusChange
+from .forms import profileForm, userUpdateForm, orderStatusChange , serviceTypeForm
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from django.urls import reverse
@@ -174,7 +174,10 @@ class OrderList(ListView):
     # to send the data of other model to the the cbv
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        #form for manager to change status
         context["form"] = orderStatusChange()
+        # form for user to add service needed
+        context['service_form'] = serviceTypeForm()
         return context
 
 
@@ -182,11 +185,17 @@ def statusUpdate(request, order_id):
     order = Order.objects.get(id=order_id)
     if request.method == "POST":
         form = orderStatusChange(request.POST, instance=order)
+        service_form = serviceTypeForm(request.POST , instance=order)
         if form.is_valid():
             form.save()
+
             return redirect("order_list")
+        elif service_form.is_valid():
+            service_form.save()
+
         else:
             orderStatusChange(instance=order)
+            serviceTypeForm(instance=order)
 
     return redirect("order_list")
 
@@ -195,14 +204,12 @@ def addDish(request , dish_id):
     dish = Dish.objects.get(id=dish_id)
 
     order = Order.objects.filter(user = request.user ).first()
-    order.item.add(dish)
+
 
     if not order:
         order = Order.objects.create(user = request.user)
-        order.item.add(dish)
+
+    order.item.add(dish)
 
     return redirect('/menu/list/')
 
-
-class OrderList(ListView):
-    model = Order
