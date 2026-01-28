@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 class profileForm(ModelForm):
     class Meta:
         model = Profile
-        fields = ["image", "role", "address"]
+        fields = ["image", "address"]
 
 
 class userUpdateForm(ModelForm):
