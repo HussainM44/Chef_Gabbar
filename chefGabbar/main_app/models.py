@@ -71,4 +71,10 @@ class Order(models.Model):
         return f"{self.user.username} ordered: {items}"
 
 
+class Moment(models.Model):
+    user = models.ForeignKey(User , on_delete=models.CASCADE)
+    description = models.TextField(max_length=50 , null=True, blank=True)
+    file = models.FileField(upload_to='main_app/static/uploads' , default="")
 
+    def __str__(self):
+        return f'{self.user} moment'

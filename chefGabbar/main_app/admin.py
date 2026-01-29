@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
-from .models import Profile , Menu , Dish , Order
+from .models import Profile , Menu , Dish , Order, Moment
 
 # Register your models here.
 admin.site.register(Profile)
 admin.site.register(Menu)
 admin.site.register(Dish)
 admin.site.register(Order)
+admin.site.register(Moment)

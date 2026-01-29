@@ -6,7 +6,7 @@ from django.contrib.auth.forms import (
 )
 from django.contrib.auth.models import User
 from .models import Profile, Menu, Dish, Order
-
+from django.http import JsonResponse
 # to log in new user and create a auth session
 from django.contrib.auth import login
 
@@ -206,7 +206,6 @@ def addDish(request , dish_id):
         order = Order.objects.create(user = request.user)
 
     order.item.add(dish)
-
     return redirect('/menu/list/')
 
 def serviceType(request , order_id):

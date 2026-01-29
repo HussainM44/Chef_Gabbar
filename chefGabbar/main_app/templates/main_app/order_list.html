@@ -41,6 +41,7 @@
 {% endfor %}
 
 <p>Total = {{order.total_price}} BHD </p>
+<p>Status: {{order.get_status_display}}
 
 <p>Service Type -{{ order.get_service_type_display }}</p>
 <form method="POST" action ="{% url 'service_type' order.id %}">

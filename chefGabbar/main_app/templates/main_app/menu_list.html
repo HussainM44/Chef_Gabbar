@@ -5,15 +5,18 @@
 {% if user.is_superuser %}
 <a href="{% url 'menu_create' %}">Create Your Cuisine</a>
 {%endif%}
+<h1>Menu </h1>
 
 {% for menu in menu_list %}
-<h1>{{menu.cuisine}}</h1>
+<h2>{{menu.cuisine}}</h2>
 {% for dish in menu.dish_set.all %}
 <p>{{dish.name}} - {{dish.price}} BHD - {{dish.description}} </p>
+  {% if  not user.is_superuser%}
 <form method="POST" action="{% url 'add_dish' dish.id %}" >
   {% csrf_token %}
   <button type="submit" >➕</button>
 </form>
+{% endif %}
 {% if user.is_superuser %}
 <a href= "{% url 'dish_delete' dish.pk %}">Delete {{dish.name}}</a>
 <a href= "{% url 'dish_update' dish.pk %}">Update {{dish.name}}</a>
@@ -25,6 +28,7 @@
 <a href = "{% url 'dish_create' menu.pk %}">Add A Dish</a>
 <br>
 <a href = "{% url 'menu_delete' menu.pk %}">Delete {{menu.cuisine}}</a>
+</br>
 {%endif%}
 
 {% endfor %}
