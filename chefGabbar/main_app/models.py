@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.utils import timezone
 
 # Create your models here.
 
@@ -8,24 +9,25 @@ from django.urls import reverse
 
 
 SERVICES = (
+    ("P","In-Progress"),
     ("R", "Dine-in"),
     ("D", "Delivery"),
     ("T","Take Away"),
     )
 
 STATUS = (
+    ("P","In-Progress"),
     ('C','Cooking'),
     ('R', "Ready To Go"),
     ('D','Delivered'),
-    ('F','Finished'),
     )
 
 # User Auth
 
 class Profile(models.Model):
     user = models.OneToOneField(User , on_delete=models.CASCADE)
-    image = models.ImageField(upload_to="main_app/static/uploads", default="", blank=True, null=True)
-    address = models.CharField(max_length=50 , blank=True, null=True)
+    image = models.ImageField(upload_to="main_app/static/uploads", default="")
+    address = models.CharField(max_length=50 )
 
     def __str__(self):
         return f'{self.user}'
@@ -54,8 +56,9 @@ class Dish(models.Model):
 class Order(models.Model):
     user = models.ForeignKey(User , on_delete=models.CASCADE)
     item = models.ManyToManyField(Dish)
-    service_type = models.CharField(max_length= 1 , choices= SERVICES , default='', blank=True, null=True)
-    status = models.CharField(max_length=1 , choices=STATUS , default='' , blank=True, null=True)
+    service_type = models.CharField(max_length= 1 , choices= SERVICES , default=[0][0], )
+    status = models.CharField(max_length=1 , choices=STATUS , default=[0][0])
+    created_at = models.DateTimeField(default=timezone.now)
     def total_price(self):
         total = 0
         for dish in self.item.all():

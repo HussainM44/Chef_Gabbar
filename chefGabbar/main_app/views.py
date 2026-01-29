@@ -144,7 +144,7 @@ class MenuDelete(DeleteView):
 
 class DishCreate(CreateView):
     model = Dish
-    fields = ["name", "description", "dish_image"]
+    fields = ["name",'price', "description", "dish_image"]
     success_url = "/menu/list/"
 
     def form_valid(self, form):
@@ -170,7 +170,7 @@ class DishUpdate(UpdateView):
 
 class OrderList(ListView):
     model = Order
-    ordering = ["-id"]
+    ordering = ["-created_at"]
     # to send the data of other model to the the cbv
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -185,14 +185,10 @@ def statusUpdate(request, order_id):
     order = Order.objects.get(id=order_id)
     if request.method == "POST":
         form = orderStatusChange(request.POST, instance=order)
-        service_form = serviceTypeForm(request.POST , instance=order)
         if form.is_valid():
             form.save()
 
             return redirect("order_list")
-        elif service_form.is_valid():
-            service_form.save()
-
         else:
             orderStatusChange(instance=order)
             serviceTypeForm(instance=order)
@@ -212,4 +208,16 @@ def addDish(request , dish_id):
     order.item.add(dish)
 
     return redirect('/menu/list/')
+
+def serviceType(request , order_id):
+    order = Order.objects.get(id=order_id)
+    if request.method == "POST":
+        service_form = serviceTypeForm(request.POST , instance=order)
+        if service_form.is_valid():
+            service_form.save()
+        else:
+            serviceTypeForm(instance=order)
+
+    return redirect("order_list")
+
 

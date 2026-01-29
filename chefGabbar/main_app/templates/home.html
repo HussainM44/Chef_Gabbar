@@ -18,8 +18,7 @@
 
   <h1>Chef Gabbar</h1>
 {% if user.is_authenticated %}
-  <h3>Welcome {{user.username}} </h3>
-  <p>Position : {{user.profile.get_role_display}}</p>
+  <h3>Welcome {{user.username.capitalize}} </h3>
   {% endif %}
 
   <p>

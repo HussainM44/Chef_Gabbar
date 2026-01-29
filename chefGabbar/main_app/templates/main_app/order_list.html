@@ -6,17 +6,16 @@
 <h1>Order list </h1>
 {% for order in order_list %}
 
-<h3>Order from: {{order.user.username}}</h3>
+<h3>Order from: {{order.user.username}} at {{order.created_at}} </h3>
     <h4>Cart:</h4>
     <ul>
       {% for item in order.item.all %}
         <li>{{ item.name }} ({{ item.price }} BHD)</li>
       {% endfor %}
     </ul>
+    <p>Total = {{order.total_price}} BHD </p>
 <p>Service Type: {{order.get_service_type_display}}</p>
-{{order.get_status_display}}
-<p>Total = {{order.total_price}} BHD </p>
-
+<p>Status: {{order.get_status_display}}</p>
 <form method="POST" action ="{% url 'status_update' order.id %}">
   {% csrf_token %}
   {{form.as_p}}
@@ -24,11 +23,13 @@
 </form>
 
 
+
 {% endfor %}
 
 {% else %}
 
 <h1>Cart</h1>
+
 {% for order in order_list %}
 {% if order.user == request.user %}
 {% for item in order.item.all %}
@@ -41,18 +42,13 @@
 
 <p>Total = {{order.total_price}} BHD </p>
 
-<p>{{order.get_service_type_display}}
-<form method="POST" action ="{% url 'status_update' order.id %}">
+<p>Service Type -{{ order.get_service_type_display }}</p>
+<form method="POST" action ="{% url 'service_type' order.id %}">
   {% csrf_token %}
   {{service_form.as_p}}
   <input type="submit" value="Submit">
 </form>
 
-{% if order.item.count == 0 %}
-<h3>Nothing Added in Cart</h3>
-<h5>To Add to Cart</h5>
-<a href="{% url 'menu_list' %}">Checkout Our Menu</a>
-{% endif %}
 
 {% endif %}
 {% endfor %}
