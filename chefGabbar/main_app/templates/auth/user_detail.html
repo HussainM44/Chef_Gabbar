@@ -17,7 +17,9 @@
 <p>Address : {{object.profile.address}}</p>
 
 <li>
+  {% if request.user.id == user.id %}
   <a href= "{% url 'user_update' user.id %}">Edit Profile</a>
+  {% endif %}
 </li>
 
 

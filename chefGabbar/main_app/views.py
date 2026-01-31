@@ -208,6 +208,7 @@ def addDish(request , dish_id):
     order.item.add(dish)
     return redirect('/menu/list/')
 
+
 def serviceType(request , order_id):
     order = Order.objects.get(id=order_id)
     if request.method == "POST":

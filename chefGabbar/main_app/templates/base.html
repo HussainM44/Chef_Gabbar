@@ -22,6 +22,8 @@
           {% else %}
           <a href="{% url 'order_list' %}">Cart </a>
           {% endif %}
+          <a href="{% url 'moment_list' %}">Moment </a>
+
           <form method='post' action='{% url 'logout' %}'>
           {% csrf_token %}
           <input type='submit' value='Logout'>
