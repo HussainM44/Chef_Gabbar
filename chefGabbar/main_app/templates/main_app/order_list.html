@@ -35,9 +35,11 @@
 {% for item in order.item.all %}
 <ul>
   <li>{{item}} - {{item.price}} BHD </li>
+  <form method="POST" action="{% url 'item_delete' order.id item.id %}">
+    {% csrf_token %}
+    <button type='submit'>✖️</button>
+  </form>
 </ul>
-
-
 {% endfor %}
 
 <p>Total = {{order.total_price}} BHD </p>
@@ -49,8 +51,10 @@
   {{service_form.as_p}}
   <input type="submit" value="Submit">
 </form>
-
-
+<form method="POST" action="{% url 'order_delete' order.pk %}">
+  {% csrf_token %}
+  <button type='submit'>Cancel Order</button>
+</form>
 {% endif %}
 {% endfor %}
 

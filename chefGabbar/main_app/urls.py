@@ -30,10 +30,11 @@ urlpatterns = [
 
     #Adding items to cart for User
     path('add_dish/<int:dish_id>/' , views.addDish, name = 'add_dish'),
-    path('cart/list' , views.OrderList.as_view(), name='order_list'),
     path('order/<int:order_id>/service_type/', views.serviceType, name = 'service_type'),
+    path('order/<int:pk>/delete/', views.OrderDelete.as_view(), name = 'order_delete'),
+    path('order/<int:order_id>/delete/item/<int:item_id>/delete/', views.itemDelete, name = 'item_delete'),
 
     # User Moments
     path('moments/list/', views.MomentList.as_view(), name='moment_list')
 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

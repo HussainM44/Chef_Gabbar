@@ -219,6 +219,16 @@ def serviceType(request , order_id):
 
     return redirect("order_list")
 
+class OrderDelete(DeleteView):
+    model = Order
+    success_url = '/order/list/'
+
+def itemDelete(request,order_id,  item_id):
+    order = Order.objects.get(id = order_id)
+    item = Dish.objects.get(id = item_id)
+    order.item.remove(item)
+    return redirect('/order/list/')
+
 
 # Moment Views
 

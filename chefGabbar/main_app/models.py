@@ -9,7 +9,6 @@ from django.utils import timezone
 
 
 SERVICES = (
-    ("P","In-Progress"),
     ("R", "Dine-in"),
     ("D", "Delivery"),
     ("T","Take Away"),
@@ -56,8 +55,8 @@ class Dish(models.Model):
 class Order(models.Model):
     user = models.ForeignKey(User , on_delete=models.CASCADE)
     item = models.ManyToManyField(Dish)
-    service_type = models.CharField(max_length= 1 , choices= SERVICES , default=[0][0], )
-    status = models.CharField(max_length=1 , choices=STATUS , default=[0][0])
+    service_type = models.CharField(max_length= 10 , choices= SERVICES , default='Dine-in', )
+    status = models.CharField(max_length=10 , choices=STATUS , default="Waiting")
     created_at = models.DateTimeField(default=timezone.now)
     def total_price(self):
         total = 0
@@ -74,7 +73,7 @@ class Order(models.Model):
 class Moment(models.Model):
     user = models.ForeignKey(User , on_delete=models.CASCADE)
     description = models.TextField(max_length=50 , null=True, blank=True)
-    file = models.FileField(upload_to='uploads/', blank=True, null=True)
+    file = models.FileField(upload_to="main_app/static/uploads", blank=True, null=True)
 
     def __str__(self):
         return f'{self.user},s moment'

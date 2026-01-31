@@ -25,4 +25,3 @@ class serviceTypeForm(ModelForm):
     class Meta:
         model = Order
         fields = ['service_type']
-

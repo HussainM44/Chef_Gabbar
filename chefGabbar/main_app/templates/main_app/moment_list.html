@@ -3,13 +3,11 @@
 {% block content %}
 {% for moment in moment_list %}
   {% if moment.file %}
-    {% if moment.file.url|lower|endswith:".mp4" %}
+    {% if moment.file.url %}
       <video width="320" controls>
         <source src="{{ moment.file.url }}" type="video/mp4">
         Your browser does not support the video tag.
       </video>
-    {% else %}
-      <img src="{{ moment.file.url }}" alt="Moment" width="320">
     {% endif %}
   {% endif %}
   {% if moment.description %}
