@@ -31,6 +31,7 @@ urlpatterns = [
     # Bucket For Customer
     path('dish_bucket/add/<int:dish_id>/', views.addDish, name= 'add_dish'),
     path('bucket/<int:bucket_id>/service_type/',views.serviceType , name = 'service_type'),
+    path('bucket/<int:bucket_id>/add/',views.bucketToOrder, name= "bucketToOrder"),
 
     # User Moments
     path('moments/list/', views.MomentList.as_view(), name='moment_list')

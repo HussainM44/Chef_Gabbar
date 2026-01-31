@@ -180,7 +180,10 @@ class OrderList(ListView):
     model = Order
     ordering = ["-created_at"]
     # to send the data of other model to the the cbv
-
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = orderStatusChange()
+        return context
 
 
 def statusUpdate(request, order_id):
@@ -194,6 +197,15 @@ def statusUpdate(request, order_id):
         else:
             orderStatusChange(instance=order)
     return redirect("order_list")
+
+def bucketToOrder(request, bucket_id):
+    bucket = Bucket.objects.get(id=bucket_id)
+    order = Order.objects.filter(bucket=bucket).first()
+
+    if not order:
+        order = Order.objects.create(bucket=bucket)
+
+    return redirect("/order/list/")
 
 
 # Bucket for Customer
