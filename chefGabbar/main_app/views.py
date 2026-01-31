@@ -5,7 +5,7 @@ from django.contrib.auth.forms import (
     PasswordChangeForm,
 )
 from django.contrib.auth.models import User
-from .models import Profile, Menu, Dish, Order , Moment
+from .models import Profile, Menu, Dish, Order , Moment, Bucket
 from django.http import JsonResponse
 # to log in new user and create a auth session
 from django.contrib.auth import login
@@ -70,6 +70,10 @@ def signup(request):
 
 class UserDetail(DetailView):
     model = User
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['moments'] = Moment.objects.filter(user = self.object)
+        return context
 
 
 def userUpdate(request, user_id):
@@ -118,6 +122,11 @@ def userUpdate(request, user_id):
 
 class MenuList(ListView):
     model = Menu
+    def get_context_data(self, **kwargs):
+        context= super().get_context_data(**kwargs)
+        context['buckets'] = Bucket.objects.filter(user = self.request.user)
+        context['form'] = serviceTypeForm()
+        return context
 
 
 class MenuCreate(CreateView):
@@ -167,18 +176,11 @@ class DishUpdate(UpdateView):
 
 # Order for Manager
 
-
 class OrderList(ListView):
     model = Order
     ordering = ["-created_at"]
     # to send the data of other model to the the cbv
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        #form for manager to change status
-        context["form"] = orderStatusChange()
-        # form for user to add service needed
-        context['service_form'] = serviceTypeForm()
-        return context
+
 
 
 def statusUpdate(request, order_id):
@@ -191,44 +193,41 @@ def statusUpdate(request, order_id):
             return redirect("order_list")
         else:
             orderStatusChange(instance=order)
-            serviceTypeForm(instance=order)
-
     return redirect("order_list")
 
 
-def addDish(request , dish_id):
+# Bucket for Customer
+
+def addDish(request, dish_id):
     dish = Dish.objects.get(id=dish_id)
 
-    order = Order.objects.filter(user = request.user ).first()
+    bucket = Bucket.objects.filter(user = request.user ).first()
 
 
-    if not order:
-        order = Order.objects.create(user = request.user)
+    if not bucket:
+        bucket = Bucket.objects.create(user = request.user)
 
-    order.item.add(dish)
+    bucket.items.add(dish)
     return redirect('/menu/list/')
 
+def serviceType(request, bucket_id):
+    bucket = Bucket.objects.get(id=bucket_id)
 
-def serviceType(request , order_id):
-    order = Order.objects.get(id=order_id)
     if request.method == "POST":
-        service_form = serviceTypeForm(request.POST , instance=order)
-        if service_form.is_valid():
-            service_form.save()
-        else:
-            serviceTypeForm(instance=order)
+        form = serviceTypeForm(request.POST, instance=bucket)
+        if form.is_valid():
+            form.save()
+            return redirect("/menu/list/")
+    else:
+        form = serviceTypeForm(instance=bucket)
 
-    return redirect("order_list")
+    return redirect("/menu/list/")
 
-class OrderDelete(DeleteView):
-    model = Order
-    success_url = '/order/list/'
 
-def itemDelete(request,order_id,  item_id):
-    order = Order.objects.get(id = order_id)
-    item = Dish.objects.get(id = item_id)
-    order.item.remove(item)
-    return redirect('/order/list/')
+
+
+
+
 
 
 # Moment Views

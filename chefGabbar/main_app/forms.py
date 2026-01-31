@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from .models import Profile , Menu , Dish , Order
+from .models import Profile , Menu , Dish , Order, Bucket
 from django.contrib.auth.models import User
 
 
@@ -20,8 +20,7 @@ class orderStatusChange(ModelForm):
         model = Order
         fields = ['status']
 
-
 class serviceTypeForm(ModelForm):
     class Meta:
-        model = Order
+        model = Bucket
         fields = ['service_type']

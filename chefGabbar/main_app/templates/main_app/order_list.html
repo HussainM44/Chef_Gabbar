@@ -4,9 +4,10 @@
 {% comment %} This view is for Manager / Superuser {% endcomment %}
 {% if user.is_superuser %}
 <h1>Order list </h1>
+{% if order %}
 {% for order in order_list %}
 
-<h3>Order from: {{order.user.username}} at {{order.created_at}} </h3>
+<h3>Ordered by {{order.user.username.capitalize}} at {{order.created_at}} </h3>
     <h4>Cart:</h4>
     <ul>
       {% for item in order.item.all %}
@@ -16,47 +17,17 @@
     <p>Total = {{order.total_price}} BHD </p>
 <p>Service Type: {{order.get_service_type_display}}</p>
 <p>Status: {{order.get_status_display}}</p>
-<form method="POST" action ="{% url 'status_update' order.id %}">
-  {% csrf_token %}
-  {{form.as_p}}
-  <input type="submit" value="Change Status">
-</form>
+
 
 
 
 {% endfor %}
+{% else %}
+<h3>No Orders Yet </h3>
+{% endif %}
 
 {% else %}
 
-<h1>Cart</h1>
-
-{% for order in order_list %}
-{% if order.user == request.user %}
-{% for item in order.item.all %}
-<ul>
-  <li>{{item}} - {{item.price}} BHD </li>
-  <form method="POST" action="{% url 'item_delete' order.id item.id %}">
-    {% csrf_token %}
-    <button type='submit'>✖️</button>
-  </form>
-</ul>
-{% endfor %}
-
-<p>Total = {{order.total_price}} BHD </p>
-<p>Status: {{order.get_status_display}}
-
-<p>Service Type -{{ order.get_service_type_display }}</p>
-<form method="POST" action ="{% url 'service_type' order.id %}">
-  {% csrf_token %}
-  {{service_form.as_p}}
-  <input type="submit" value="Submit">
-</form>
-<form method="POST" action="{% url 'order_delete' order.pk %}">
-  {% csrf_token %}
-  <button type='submit'>Cancel Order</button>
-</form>
-{% endif %}
-{% endfor %}
 
 
 

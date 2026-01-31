@@ -28,11 +28,9 @@ urlpatterns = [
     path('order/list/', views.OrderList.as_view(),name = 'order_list'),
     path('order/<int:order_id>/update/', views.statusUpdate, name = 'status_update'),
 
-    #Adding items to cart for User
-    path('add_dish/<int:dish_id>/' , views.addDish, name = 'add_dish'),
-    path('order/<int:order_id>/service_type/', views.serviceType, name = 'service_type'),
-    path('order/<int:pk>/delete/', views.OrderDelete.as_view(), name = 'order_delete'),
-    path('order/<int:order_id>/delete/item/<int:item_id>/delete/', views.itemDelete, name = 'item_delete'),
+    # Bucket For Customer
+    path('dish_bucket/add/<int:dish_id>/', views.addDish, name= 'add_dish'),
+    path('bucket/<int:bucket_id>/service_type/',views.serviceType , name = 'service_type'),
 
     # User Moments
     path('moments/list/', views.MomentList.as_view(), name='moment_list')

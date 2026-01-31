@@ -16,6 +16,22 @@
 <p>Password: {{ "********" }}</p>
 <p>Address : {{object.profile.address}}</p>
 
+<h3>{{object.username}}'s Moments</h3>
+{% if moments %}
+  {% for moment in moments %}
+    {% if moment.file %}
+      <video width="320" controls>
+        <source src="{{ moment.file.url }}" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    {% else %}
+      <p>No file for this moment.</p>
+    {% endif %}
+  {% endfor %}
+{% else %}
+  <h4>No Moments by User yet</h4>
+{% endif %}
+
 <li>
   {% if request.user.id == user.id %}
   <a href= "{% url 'user_update' user.id %}">Edit Profile</a>

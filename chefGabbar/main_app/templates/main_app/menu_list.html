@@ -34,4 +34,28 @@
 
 {% endfor %}
 
+
+{% if buckets %}
+  <div id="bucket-container">
+    <h2 id='bucket' >Bucket</h2>
+
+    {% for bucket in buckets %}
+      <h3 id='item'>Items:</h3>
+      {% for item in bucket.items.all %}
+        <p>{{ item.name }} - {{ item.price }}</p> <br>
+      {% endfor %}
+
+      <p>{{ bucket.get_service_type_display }}</p>
+
+      <form method="post" action="{% url 'service_type' bucket.id %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+      </form>
+
+    {% endfor %}
+  </div>
+{% endif %}
+
+
 {%endblock%}

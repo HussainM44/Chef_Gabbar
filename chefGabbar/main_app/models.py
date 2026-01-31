@@ -51,23 +51,28 @@ class Dish(models.Model):
     def __str__(self):
         return f"{self.name}"
 
-
-class Order(models.Model):
+class Bucket(models.Model):
     user = models.ForeignKey(User , on_delete=models.CASCADE)
-    item = models.ManyToManyField(Dish)
-    service_type = models.CharField(max_length= 10 , choices= SERVICES , default='Dine-in', )
-    status = models.CharField(max_length=10 , choices=STATUS , default="Waiting")
-    created_at = models.DateTimeField(default=timezone.now)
+    items = models.ManyToManyField(Dish)
+    service_type = models.CharField(max_length= 10 , choices= SERVICES , default='Dine-in')
     def total_price(self):
         total = 0
-        for dish in self.item.all():
-            total += dish.price
+        for items in self.items.all():
+            total += items.price
         return total
 
     def __str__(self):
-        for dish in self.item.all():
-            items = dish.name
-        return f"{self.user.username} ordered: {items}"
+        for items in self.items.all():
+            return f"{self.items}"
+
+
+class Order(models.Model):
+    bucket = models.ForeignKey(Bucket, on_delete=models.CASCADE)
+    status = models.CharField(max_length=10 , choices=STATUS , default="Waiting")
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.user.username}'s {self.order_id}"
 
 
 class Moment(models.Model):

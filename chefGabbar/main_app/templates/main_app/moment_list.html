@@ -2,11 +2,20 @@
 
 {% block content %}
 {% for moment in moment_list %}
+{% load static %}
 <a href="{% url 'profile' moment.user.id %}">
-<h3>{{moment.user.username}}</h3> </a>
+<div style="display: flex; align-items: center; gap: 8px;">
+    <img
+        src="{% static user.profile.image.url|cut:'main_app/static/' %}"
+        alt="User Image"
+        style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
+    <h3 style="margin: 0; font-size: 16px;">{{ moment.user.username }}</h3>
+</div>
+
+</a>
   {% if moment.file %}
     {% if moment.file.url %}
-    {% load static %}
+
       <video width="320" controls>
         <source src="{{ moment.file.url }}" type="video/mp4">
         Your browser does not support the video tag.
@@ -14,6 +23,7 @@
     {% endif %}
   {% endif %}
     <p>{{ moment.description }}</p>
-{% endfor %}
+<br>
+    {% endfor %}
 
 {% endblock %}
