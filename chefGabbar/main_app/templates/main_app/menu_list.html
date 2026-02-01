@@ -11,11 +11,20 @@
 <h2>{{menu.cuisine}}</h2>
 {% for dish in menu.dish_set.all %}
 <p>{{dish.name}} - {{dish.price}} BHD - {{dish.description}} </p>
+{% load static %}
+<img
+            src="{% static dish.dish_image.url|cut:'main_app/static/' %}"
+            width="100"
+            height="100"
+            alt="Dish Image">
   {% if  not user.is_superuser%}
+  {% if user.is_authenticated %}
 <form method="POST" action="{% url 'add_dish' dish.id %}" >
   {% csrf_token %}
   <button type="submit">➕</button>
 </form>
+{% endif %}
+
 {% endif %}
 {% if user.is_superuser %}
 <a href= "{% url 'dish_delete' dish.pk %}">Delete {{dish.name}}</a>
@@ -41,9 +50,12 @@
 
     {% for bucket in buckets %}
       <h3 class='a'>Items:</h3>
+
       {% for item in bucket.items.all %}
-        <p>{{ item.name }} - {{ item.price }}</p> <br>
+        <p>{{ item.name }} - {{ item.price }}</p>
+
       {% endfor %}
+      <p>Total: {{bucket.total_price}} BHD </p>
 
       {% if bucket.service_type == 'P' %}
   <form method="post" action="{% url 'service_type' bucket.id %}">
@@ -55,15 +67,24 @@
   <p id='service'>Service Type : {{ bucket.get_service_type_display }}</p>
 {% endif %}
 
-<form method="POST" action="{% url 'bucketToOrder' bucket.id %}">
-  {% csrf_token %}
-  <button type='submit'>Add to Cart</button>
-</form>
+{% if bucket.id not in bucket_added %}
+    <form method="POST" action="{% url 'bucketToOrder' bucket.id %}">
+      {% csrf_token %}
+      <button type='submit'>Add to Cart</button>
+    </form>
+    <form method="post" action="{% url 'bucket_delete' bucket.id %}">
+        {% csrf_token %}
+        <button type='submit'>Clear Bucket</button>
+      </form>
+  {% else %}
+    <p>Added to Cart ✅</p>
+  {% endif %}
 
 
     {% endfor %}
   </div>
 {% endif %}
+
 
 
 {%endblock%}

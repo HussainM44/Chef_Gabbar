@@ -32,6 +32,7 @@ urlpatterns = [
     path('dish_bucket/add/<int:dish_id>/', views.addDish, name= 'add_dish'),
     path('bucket/<int:bucket_id>/service_type/',views.serviceType , name = 'service_type'),
     path('bucket/<int:bucket_id>/add/',views.bucketToOrder, name= "bucketToOrder"),
+    path('bucket/<int:pk>/delete/', views.BucketDelete.as_view(), name='bucket_delete'),
 
     # User Moments
     path('moments/list/', views.MomentList.as_view(), name='moment_list')

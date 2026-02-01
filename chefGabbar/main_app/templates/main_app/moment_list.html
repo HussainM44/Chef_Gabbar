@@ -13,16 +13,17 @@
 </div>
 
 </a>
-  {% if moment.file %}
-    {% if moment.file.url %}
 
+    <p>{{ moment.description }}</p>
+      {% if moment.file %}
+    {% if moment.file.url %}
       <video width="320" controls>
         <source src="{{ moment.file.url }}" type="video/mp4">
         Your browser does not support the video tag.
       </video>
     {% endif %}
   {% endif %}
-    <p>{{ moment.description }}</p>
+
 <br>
     {% endfor %}
 

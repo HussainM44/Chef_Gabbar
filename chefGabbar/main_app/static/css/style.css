@@ -126,4 +126,23 @@ color: #8b0000;
 #service{
   color: #8b0000;
 }
+.navbar-brand {
+    font-size:1.3rem;                     /* slightly bigger for prominence */
+    font-weight: 900;                       /* extra bold */
+    font-family: 'Montserrat', 'Segoe UI', Tahoma, sans-serif; /* modern, clean font */
+    color: #ffd700;                            /* crisp white */
+    text-transform: uppercase;              /* classy uppercase look */
+    letter-spacing: 2px;                    /* space out letters for elegance */
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.4); /* subtle depth/shadow */
+    padding: 0.2rem 0.5rem;                 /* slight padding for balance */
+    border-radius: 5px;                     /* rounded corners for smoothness */
+    background: rgba(0,0,0,0.15);           /* very subtle transparent background for contrast */
+    transition: all 0.3s ease;              /* smooth hover effect */
+}
 
+.navbar-brand:hover {
+    transform: scale(1.08);                 /* gentle zoom on hover */
+    background: rgba(0,0,0,0.25);           /* slightly stronger contrast */
+    color: #ffe6e6;                         /* soft highlight */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* subtle lift effect */
+}

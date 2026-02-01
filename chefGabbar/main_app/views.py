@@ -124,7 +124,13 @@ class MenuList(ListView):
     model = Menu
     def get_context_data(self, **kwargs):
         context= super().get_context_data(**kwargs)
-        context['buckets'] = Bucket.objects.filter(user = self.request.user)
+        if self.request.user.is_authenticated:
+            context['buckets'] = Bucket.objects.filter(user=self.request.user)
+            context['bucket_added'] = Order.objects.filter(bucket__in=context['buckets']).values_list('bucket_id', flat=True)
+        else:
+            context['buckets'] = None
+            context['bucket_added'] = None
+
         context['form'] = serviceTypeForm()
         return context
 
@@ -192,6 +198,11 @@ def statusUpdate(request, order_id):
         form = orderStatusChange(request.POST, instance=order)
         if form.is_valid():
             form.save()
+            if order.status == "F" :
+                bucket = order.bucket
+                order.delete()
+                bucket.delete()
+
 
             return redirect("order_list")
         else:
@@ -236,9 +247,11 @@ def serviceType(request, bucket_id):
     return redirect("/menu/list/")
 
 
-
-
-
+class BucketDelete(DeleteView):
+    model = Bucket
+    success_url = '/menu/list/'
+    def get_bucket(self):
+        return Bucket.objects.filter(user = self.request.user)
 
 
 

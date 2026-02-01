@@ -15,6 +15,11 @@
 <p>Email : {{object.email}} </p>
 <p>Password: {{ "********" }}</p>
 <p>Address : {{object.profile.address}}</p>
+<li>
+  {% if request.user.id == user.id %}
+  <a href= "{% url 'user_update' user.id %}">Edit Profile</a>
+  {% endif %}
+</li>
 
 <h3>{{object.username}}'s Moments</h3>
 {% if moments %}
@@ -32,11 +37,7 @@
   <h4>No Moments by User yet</h4>
 {% endif %}
 
-<li>
-  {% if request.user.id == user.id %}
-  <a href= "{% url 'user_update' user.id %}">Edit Profile</a>
-  {% endif %}
-</li>
+
 
 
 {% endblock %}
