@@ -52,9 +52,9 @@
       <h3 class='a'>Items:</h3>
 
       {% for item in bucket.items.all %}
-        <p>{{ item.name }} - {{ item.price }}</p>
-
+        <p>{{ item.name }} - {{ item.price }}  </p>
       {% endfor %}
+
       <p>Total: {{bucket.total_price}} BHD </p>
 
       {% if bucket.service_type == 'P' %}

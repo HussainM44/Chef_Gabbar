@@ -24,3 +24,5 @@ class serviceTypeForm(ModelForm):
     class Meta:
         model = Bucket
         fields = ['service_type']
+
+

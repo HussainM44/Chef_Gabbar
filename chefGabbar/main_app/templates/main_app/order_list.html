@@ -3,7 +3,8 @@
 {% block content %}
 {% comment %} This view is for Manager / Superuser {% endcomment %}
 {% if user.is_superuser %}
-<h1>Order list </h1>
+<h1>Orders</h1>
+{% if order_list %}
 {% for order in order_list %}
 
 <h3>Ordered by {{order.bucket.user.username.capitalize}} at {{order.created_at}} </h3>
@@ -23,14 +24,19 @@
   <button type= 'submit' >Change Status</button>
 </form>
 
-
 {% endfor %}
+{% else %}
+<h3>No Orders IN Yet </h3>
+<h4>Orders are on the way</h4>
+
+{% endif %}
+
 
 {% else %}
 {% comment %} For Customer View  {% endcomment %}
 
 <h1>Cart</h1>
-
+{% if order_list %}
 {% for order in order_list %}
   {% if order.bucket.user == request.user %}
     <h3>Status : {{order.get_status_display}}
@@ -52,7 +58,12 @@
       {% endif %}
       {% endif %}
 {% endfor %}
-
+{% else %}
+<h2>Nothing in the Bucket yet</h2>
+<a href='{% url 'menu_list' %}'>
+  <h3>Checkout the menu</h3>
+</a>
+{% endif %}
 
 {% endif %}
 {% endblock %}

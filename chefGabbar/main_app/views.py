@@ -130,7 +130,6 @@ class MenuList(ListView):
         else:
             context['buckets'] = None
             context['bucket_added'] = None
-
         context['form'] = serviceTypeForm()
         return context
 
