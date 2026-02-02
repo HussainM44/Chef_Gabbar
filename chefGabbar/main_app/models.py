@@ -81,6 +81,7 @@ class Moment(models.Model):
     user = models.ForeignKey(User , on_delete=models.CASCADE)
     description = models.TextField(max_length=50 , null=True, blank=True)
     file = models.FileField(upload_to="main_app/static/uploads", blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f'{self.user},s moment'

@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% if user.is_authenticated %}
+<nav>
+  <a href='{% url "moment_create" %}'>Create your Moment</a>
+</nav>
+{% endif%}
 {% for moment in moment_list %}
 {% load static %}
 <a href="{% url 'profile' moment.user.id %}">
@@ -22,13 +27,20 @@
         <source src="{{ moment.file.url }}" type="video/mp4">
         Your browser does not support the video tag.
       </video>
-
     {% endif %}
     {% else %}
       <h4>No file found</h4>
   {% endif %}
 
-<br>
+      {% if moment.user == request.user %}
+              <a href='{% url "moment_update" moment.pk %}'>Edit Moment</a>
+      <form method='post' action='{% url 'moment_delete' moment.pk %}'>
+        {% csrf_token %}
+        <button type='submit'>Delete</button>
+      </form>
+
+    {% endif %}
+
     {% endfor %}
 
 {% endblock %}

@@ -36,6 +36,8 @@ urlpatterns = [
 
     # User Moments
     path('moments/list/', views.MomentList.as_view(), name='moment_list'),
-    path('moments/create/', views.MomentCreate.as_view(), name='moment_create')
+    path('moments/create/', views.MomentCreate.as_view(), name='moment_create'),
+    path('moments/<int:pk>/update/', views.MomentUpdate.as_view(), name='moment_update'),
+    path('moments/<int:pk>/delete/', views.MomentDelete.as_view(), name='moment_delete'),
 
 ]

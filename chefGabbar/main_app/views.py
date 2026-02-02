@@ -258,6 +258,7 @@ class BucketDelete(DeleteView):
 
 class MomentList(ListView):
     model = Moment
+    ordering = ['-created_at']
 
 class MomentCreate(CreateView):
     model = Moment
@@ -267,3 +268,13 @@ class MomentCreate(CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
+
+class MomentUpdate(UpdateView):
+    model = Moment
+    fields = ['description']
+    success_url = '/moments/list/'
+
+
+class MomentDelete(DeleteView):
+    model = Moment
+    success_url = '/moments/list/'

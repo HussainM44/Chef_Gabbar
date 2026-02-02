@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+{% if object %}
+<h1>Update Your Moment</h1>
+{% else %}
 <h1>Create Your Moment</h1>
+{% endif %}
 
 <form method='post' action='' enctype="multipart/form-data" >
   {% csrf_token %}
