@@ -7,7 +7,7 @@
 {% if order_list %}
 {% for order in order_list %}
 
-<h3>Order by {{order.bucket.user.username.capitalize}}</h3>
+<h3>Ordered by {{order.bucket.user.username.capitalize}}</h3>
 <h4>Service : {{order.bucket.get_service_type_display}}</h4>
     <h4>Cart:</h4>
     <ul>
@@ -47,6 +47,10 @@
     </ul>
 
 <p>Total = {{order.bucket.total_price}} BHD </p>
+  <form method='post' action='{% url 'checkout' order.id %}'>
+    {% csrf_token %}
+    <button type='submit'>Checkout</button>
+  </form>
 <p>Service : {{order.bucket.get_service_type_display}}
   {% if order.status == 'F' %}
       <form method="POST" action="{% url 'bucketOrder_delete' order.bucket.id %}">

@@ -16,9 +16,73 @@ from .forms import profileForm, userUpdateForm, orderStatusChange , serviceTypeF
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from django.urls import reverse
-
+from django.views import View
+import stripe
+from django.conf import settings
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
 
 # Create your views here.
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+@method_decorator(csrf_exempt, name='dispatch')
+class CreateCheckoutSessionView(View):
+
+    def post(self, request, order_id):
+
+        order = Order.objects.get(id=order_id)
+        bucket = order.bucket
+
+        # Build full domain (http://127.0.0.1:8000)
+        domain = request.build_absolute_uri('/')[:-1]
+
+        success_url = domain + '/success/'
+        cancel_url = domain + '/cancel/'
+
+        checkout_session = stripe.checkout.Session.create(
+            line_items=[
+                {
+                    "price_data": {
+                        "currency": "usd",
+                        "unit_amount": int(bucket.total_price() * 100),
+                        "product_data": {
+                            "name": f"Order #{order.id}",
+                        },
+                    },
+                    "quantity": 1,
+                }
+            ],
+            mode='payment',
+            success_url=success_url,
+            cancel_url=cancel_url,
+        )
+
+        return redirect(checkout_session.url)
+
+
+# @method_decorator(csrf_exempt, name= 'dispatch')
+# class CreateCheckoutSessionView(View):
+#     def post(self, request , order_id):
+#         order = Order.objects.get(id = order_id)
+#         bucket = order.bucket
+
+#         checkout_session = stripe.checkout.Session.create(
+#             line_items=[
+#                 {
+#                     "price_data":{
+#                         'currency':"usd",
+#                         'unit_amount':int(bucket.total_price() * 100)},
+#                         'quantity':1,
+#                         }],
+#             mode='payment',
+#             # customer_email=request.user.email,
+#             cancel_url='/cancel/',
+#             success_url = "/success/",
+#         )
+
+#         return redirect(checkout_session.url)
+
 
 
 # BASIC Views
@@ -278,3 +342,8 @@ class MomentUpdate(UpdateView):
 class MomentDelete(DeleteView):
     model = Moment
     success_url = '/moments/list/'
+
+
+
+
+#PAYMENTS

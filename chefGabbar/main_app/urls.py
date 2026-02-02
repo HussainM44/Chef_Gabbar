@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.conf.urls.static import static
 from django.conf import settings
 
+
 urlpatterns = [
     path('',views.home, name='home'),
 
@@ -39,5 +40,8 @@ urlpatterns = [
     path('moments/create/', views.MomentCreate.as_view(), name='moment_create'),
     path('moments/<int:pk>/update/', views.MomentUpdate.as_view(), name='moment_update'),
     path('moments/<int:pk>/delete/', views.MomentDelete.as_view(), name='moment_delete'),
+
+    # PAYMENT URL
+    path("checkout/<int:order_id>/", views.CreateCheckoutSessionView.as_view(), name = 'checkout'),
 
 ]

@@ -56,12 +56,11 @@ class Dish(models.Model):
 class Bucket(models.Model):
     user = models.ForeignKey(User , on_delete=models.CASCADE)
     items = models.ManyToManyField(Dish)
-    quantity = models.PositiveIntegerField(default=1)
     service_type = models.CharField(max_length= 10 , choices= SERVICES , default='P')
     def total_price(self):
         total = 0
         for items in self.items.all():
-            total += items.price * self.quantity
+            total += items.price
         return total
 
     def __str__(self):
@@ -85,3 +84,5 @@ class Moment(models.Model):
 
     def __str__(self):
         return f'{self.user},s moment'
+
+
