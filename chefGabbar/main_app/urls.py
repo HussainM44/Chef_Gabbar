@@ -35,6 +35,7 @@ urlpatterns = [
     path('bucket/<int:pk>/delete/', views.BucketDelete.as_view(), name='bucket_delete'),
 
     # User Moments
-    path('moments/list/', views.MomentList.as_view(), name='moment_list')
+    path('moments/list/', views.MomentList.as_view(), name='moment_list'),
+    path('moments/create/', views.MomentCreate.as_view(), name='moment_create')
 
 ]

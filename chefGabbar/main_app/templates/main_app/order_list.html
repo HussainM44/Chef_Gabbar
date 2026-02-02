@@ -7,7 +7,7 @@
 {% if order_list %}
 {% for order in order_list %}
 
-<h3>Ordered by {{order.bucket.user.username.capitalize}} at {{order.created_at}} </h3>
+<h3>Order by {{order.bucket.user.username.capitalize}}</h3>
 <h4>Service : {{order.bucket.get_service_type_display}}</h4>
     <h4>Cart:</h4>
     <ul>
