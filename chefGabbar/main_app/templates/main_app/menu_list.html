@@ -7,6 +7,42 @@
 {%endif%}
 <h1>Menu </h1>
 
+<h2>Search Dishes</h2>
+<form method="get" action="{% url 'menu_list' %}">
+    <input type="text" name="q" placeholder="Search for a dish..." value="{{ search_query }}">
+    <button type="submit">Search</button>
+</form>
+
+{% if search_query %}
+    <h3>Results for "{{ search_query }}":</h3>
+    {% if search_results %}
+            {% for dish in search_results %}
+<p>{{dish.name}} - {{dish.price}} BHD - {{dish.description}} </p>
+{% load static %}
+<img
+            src="{% static dish.dish_image.url|cut:'main_app/static/' %}"
+            width="100"
+            height="100"
+            alt="Dish Image">
+              {% if  not user.is_superuser%}
+  {% if user.is_authenticated %}
+<form method="POST" action="{% url 'add_dish' dish.id %}" >
+  {% csrf_token %}
+  <button type="submit">➕</button>
+</form>
+{% endif %}
+
+{% endif %}
+            <br>
+            {% endfor %}
+
+    {% else %}
+        <p>No dishes found.</p>
+    {% endif %}
+{% endif %}
+
+
+
 {% for menu in menu_list %}
 <h2>{{menu.cuisine}}</h2>
 {% for dish in menu.dish_set.all %}
@@ -80,7 +116,7 @@
   </form>
   <form method="POST" action="{% url 'bucketToOrder' bucket.id %}">
       {% csrf_token %}
-      <button type='submit'>Cash</button>
+      <button type='submit'>Pay Cash</button>
     </form>
 
   {% else %}

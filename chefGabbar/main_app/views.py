@@ -13,7 +13,7 @@ from django.contrib.auth import login
 
 # to update the auth session of the same user
 from django.contrib.auth import update_session_auth_hash
-from .forms import profileForm, userUpdateForm, orderStatusChange, serviceTypeForm 
+from .forms import profileForm, userUpdateForm, orderStatusChange, serviceTypeForm
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from django.urls import reverse
@@ -23,10 +23,14 @@ from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
 
 # Create your views here.
 
-stripe.api_key = settings.STRIPE_SECRET_KEY
+# succeeds          4242 4242 4242 4242
+# authentication    4000 0025 0000 3155
+# declined          4000 0000 0000 9995
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -177,20 +181,30 @@ def userUpdate(request, user_id):
 
 class MenuList(ListView):
     model = Menu
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # Get the search query
+        query = self.request.GET.get('q', '')
+        if query:
+            dishes = Dish.objects.filter(name__icontains=query)
+        else:
+            dishes = Dish.objects.none() 
+        context['search_results'] = dishes
+        context['search_query'] = query
+
+        # Buckets for the user
         if self.request.user.is_authenticated:
             context["buckets"] = Bucket.objects.filter(user=self.request.user)
             context["bucket_added"] = Order.objects.filter(
                 bucket__in=context["buckets"]
             ).values_list("bucket_id", flat=True)
-
         else:
             context["buckets"] = None
             context["bucket_added"] = []
 
         context["form"] = serviceTypeForm()
-
         return context
 
 
