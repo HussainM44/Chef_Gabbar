@@ -6,13 +6,14 @@
 <a href="{% url 'menu_create' %}">Create Your Cuisine</a>
 {%endif%}
 <h1>Menu </h1>
-
+{% comment %}
+-------------Search Dishes to Add-----------
+ {% endcomment %}
 <h2>Search Dishes</h2>
 <form method="get" action="{% url 'menu_list' %}">
     <input type="text" name="q" placeholder="Search for a dish..." value="{{ search_query }}">
     <button type="submit">Search</button>
 </form>
-
 {% if search_query %}
     <h3>Results for "{{ search_query }}":</h3>
     {% if search_results %}
@@ -42,7 +43,9 @@
 {% endif %}
 
 
-
+{% comment %}
+-------------All dishes in Menu-----------
+ {% endcomment %}
 {% for menu in menu_list %}
 <h2>{{menu.cuisine}}</h2>
 {% for dish in menu.dish_set.all %}
@@ -79,7 +82,9 @@
 
 {% endfor %}
 
-
+{% comment %}
+-------------Bucket to add dishes to order ----------
+ {% endcomment %}
 {% if buckets %}
   <div id="bucket-container">
     <h2 class='a' >Bucket</h2>
@@ -88,6 +93,7 @@
       <h3 class='a'>Items:</h3>
 
       {% for item in bucket.items.all %}
+      
         <p>{{ item.name }} - {{ item.price }}  </p>
       {% endfor %}
 
@@ -129,7 +135,6 @@
     {% endfor %}
   </div>
 {% endif %}
-
 
 
 {%endblock%}

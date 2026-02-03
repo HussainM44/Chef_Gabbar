@@ -5,7 +5,7 @@ from django.contrib.auth.forms import (
     PasswordChangeForm,
 )
 from django.contrib.auth.models import User
-from .models import Profile, Menu, Dish, Order, Moment, Bucket
+from .models import Profile, Menu, Dish, Order, Moment, Bucket, CompletedOrder
 from django.http import JsonResponse
 
 # to log in new user and create a auth session
@@ -13,7 +13,13 @@ from django.contrib.auth import login
 
 # to update the auth session of the same user
 from django.contrib.auth import update_session_auth_hash
-from .forms import profileForm, userUpdateForm, orderStatusChange, serviceTypeForm
+from .forms import (
+    profileForm,
+    userUpdateForm,
+    orderStatusChange,
+    serviceTypeForm,
+    CompleteOrderForm,
+)
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from django.urls import reverse
@@ -23,6 +29,7 @@ from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
@@ -69,11 +76,12 @@ class CreateCheckoutSessionView(View):
 def success(request):
     bucket_id = request.GET.get("bucket_id")
     if bucket_id:
-            bucket = Bucket.objects.get(id=bucket_id)
-            bucket.paid = True
-            bucket.save()
-            Order.objects.get_or_create(bucket=bucket)
-    return redirect('/order/list/')
+        bucket = Bucket.objects.get(id=bucket_id)
+        bucket.paid = True
+        bucket.save()
+        Order.objects.get_or_create(bucket=bucket)
+    return redirect("/order/list/")
+
 
 def failed(request):
     return HttpResponse("Payment Failed ")
@@ -186,13 +194,13 @@ class MenuList(ListView):
         context = super().get_context_data(**kwargs)
 
         # Get the search query
-        query = self.request.GET.get('q', '')
+        query = self.request.GET.get("q", "")
         if query:
             dishes = Dish.objects.filter(name__icontains=query)
         else:
-            dishes = Dish.objects.none() 
-        context['search_results'] = dishes
-        context['search_query'] = query
+            dishes = Dish.objects.none()
+        context["search_results"] = dishes
+        context["search_query"] = query
 
         # Buckets for the user
         if self.request.user.is_authenticated:
@@ -206,7 +214,6 @@ class MenuList(ListView):
 
         context["form"] = serviceTypeForm()
         return context
-
 
 
 class MenuCreate(CreateView):
@@ -276,8 +283,19 @@ def statusUpdate(request, order_id):
             form.save()
             if order.status == "F":
                 bucket = order.bucket
+                user = str(bucket.user.username)
+                payment = str(bucket.paid)
+                total = int(bucket.total_price())
+                completedOrder = CompletedOrder.objects.create(
+                user = user,
+                total = total,
+                payment= payment,
+                )
+
                 order.delete()
                 bucket.delete()
+
+
 
             return redirect("order_list")
         else:
@@ -286,23 +304,13 @@ def statusUpdate(request, order_id):
 
 
 def bucketToOrder(request, bucket_id):
-
     bucket = Bucket.objects.get(id=bucket_id)
 
-    # If bucket is paid → create order automatically
-    if bucket.paid:
-        order, created = Order.objects.get_or_create(bucket=bucket)
-        return redirect("/order/list/")
-
-    # If bucket already has an order → do nothing
-    if Order.objects.filter(bucket=bucket).exists():
-        return redirect("/order/list/")
-
-    # Otherwise create new order
-    Order.objects.create(bucket=bucket)
+    order = Order.objects.filter(bucket=bucket).first()
+    if not order:
+        order = Order.objects.create(bucket=bucket)
 
     return redirect("/order/list/")
-
 
 
 # Bucket for Customer
@@ -314,7 +322,6 @@ def addDish(request, dish_id):
 
     bucket = Bucket.objects.filter(user=request.user).first()
 
-
     if not bucket:
         bucket = Bucket.objects.create(user=request.user)
 
@@ -324,7 +331,6 @@ def addDish(request, dish_id):
     bucket.items.add(dish)
 
     return redirect("/menu/list/")
-
 
 
 def serviceType(request, bucket_id):

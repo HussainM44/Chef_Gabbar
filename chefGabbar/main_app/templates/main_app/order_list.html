@@ -1,9 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% comment %} This view is for Manager / Superuser {% endcomment %}
+{% comment %}
+------------This view is for Manager / Superuser ----------
+{% endcomment %}
 {% if user.is_superuser %}
 <h1>Orders</h1>
+{% comment %}
+-------------Shows All orders from customer -----------
+ {% endcomment %}
 {% if order_list %}
 {% for order in order_list %}
 
@@ -16,6 +21,11 @@
       {% endfor %}
     </ul>
     <p>Total = {{order.bucket.total_price}} BHD </p>
+    {% if order.bucket.paid %}
+<h4>Paid Online</h4>
+{% else %}
+<h4>Payment Later</h4>
+{% endif %}
 
 <p>Status: {{order.get_status_display}}</p>
 <form method='post' action="{% url 'status_update' order.id %}">
@@ -33,9 +43,14 @@
 
 
 {% else %}
-{% comment %} For Customer View  {% endcomment %}
+{% comment %}
+---------------- For Customer View -----------------
+ {% endcomment %}
 
 <h1>Cart</h1>
+{% comment %}
+-------------Shows logged in user current order-----------
+ {% endcomment %}
 {% if order_list %}
 {% for order in order_list %}
   {% if order.bucket.user == request.user %}
@@ -47,6 +62,11 @@
     </ul>
 
 <p>Total = {{order.bucket.total_price}} BHD </p>
+{% if order.bucket.paid %}
+<h4>Paid Online</h4>
+{% else %}
+<h4>Payment Later</h4>
+{% endif %}
 
 <p>Service : {{order.bucket.get_service_type_display}}
   {% if order.status == 'F' %}
