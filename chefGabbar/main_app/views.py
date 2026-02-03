@@ -5,14 +5,15 @@ from django.contrib.auth.forms import (
     PasswordChangeForm,
 )
 from django.contrib.auth.models import User
-from .models import Profile, Menu, Dish, Order , Moment, Bucket
+from .models import Profile, Menu, Dish, Order, Moment, Bucket
 from django.http import JsonResponse
+
 # to log in new user and create a auth session
 from django.contrib.auth import login
 
 # to update the auth session of the same user
 from django.contrib.auth import update_session_auth_hash
-from .forms import profileForm, userUpdateForm, orderStatusChange , serviceTypeForm
+from .forms import profileForm, userUpdateForm, orderStatusChange, serviceTypeForm 
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from django.urls import reverse
@@ -26,19 +27,19 @@ from django.http import HttpResponse
 # Create your views here.
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
-@method_decorator(csrf_exempt, name='dispatch')
+
+
+@method_decorator(csrf_exempt, name="dispatch")
 class CreateCheckoutSessionView(View):
 
-    def post(self, request, order_id):
+    def post(self, request, bucket_id):
 
-        order = Order.objects.get(id=order_id)
-        bucket = order.bucket
+        bucket = Bucket.objects.get(id=bucket_id)
 
-        # Build full domain (http://127.0.0.1:8000)
-        domain = request.build_absolute_uri('/')[:-1]
+        domain = "http://127.0.0.1:8000/"
 
-        success_url = domain + '/success/'
-        cancel_url = domain + '/cancel/'
+        success_url = f"{domain}success/?bucket_id={bucket.id}"
+        cancel_url = f"{domain}cancel/"
 
         checkout_session = stripe.checkout.Session.create(
             line_items=[
@@ -47,13 +48,13 @@ class CreateCheckoutSessionView(View):
                         "currency": "usd",
                         "unit_amount": int(bucket.total_price() * 100),
                         "product_data": {
-                            "name": f"Order #{order.id}",
+                            "name": f"Order #{bucket.id} dated {bucket.created_at}",
                         },
                     },
                     "quantity": 1,
                 }
             ],
-            mode='payment',
+            mode="payment",
             success_url=success_url,
             cancel_url=cancel_url,
         )
@@ -61,28 +62,17 @@ class CreateCheckoutSessionView(View):
         return redirect(checkout_session.url)
 
 
-# @method_decorator(csrf_exempt, name= 'dispatch')
-# class CreateCheckoutSessionView(View):
-#     def post(self, request , order_id):
-#         order = Order.objects.get(id = order_id)
-#         bucket = order.bucket
+def success(request):
+    bucket_id = request.GET.get("bucket_id")
+    if bucket_id:
+            bucket = Bucket.objects.get(id=bucket_id)
+            bucket.paid = True
+            bucket.save()
+            Order.objects.get_or_create(bucket=bucket)
+    return redirect('/order/list/')
 
-#         checkout_session = stripe.checkout.Session.create(
-#             line_items=[
-#                 {
-#                     "price_data":{
-#                         'currency':"usd",
-#                         'unit_amount':int(bucket.total_price() * 100)},
-#                         'quantity':1,
-#                         }],
-#             mode='payment',
-#             # customer_email=request.user.email,
-#             cancel_url='/cancel/',
-#             success_url = "/success/",
-#         )
-
-#         return redirect(checkout_session.url)
-
+def failed(request):
+    return HttpResponse("Payment Failed ")
 
 
 # BASIC Views
@@ -134,9 +124,10 @@ def signup(request):
 
 class UserDetail(DetailView):
     model = User
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['moments'] = Moment.objects.filter(user = self.object)
+        context["moments"] = Moment.objects.filter(user=self.object)
         return context
 
 
@@ -187,15 +178,21 @@ def userUpdate(request, user_id):
 class MenuList(ListView):
     model = Menu
     def get_context_data(self, **kwargs):
-        context= super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         if self.request.user.is_authenticated:
-            context['buckets'] = Bucket.objects.filter(user=self.request.user)
-            context['bucket_added'] = Order.objects.filter(bucket__in=context['buckets']).values_list('bucket_id', flat=True)
+            context["buckets"] = Bucket.objects.filter(user=self.request.user)
+            context["bucket_added"] = Order.objects.filter(
+                bucket__in=context["buckets"]
+            ).values_list("bucket_id", flat=True)
+
         else:
-            context['buckets'] = None
-            context['bucket_added'] = None
-        context['form'] = serviceTypeForm()
+            context["buckets"] = None
+            context["bucket_added"] = []
+
+        context["form"] = serviceTypeForm()
+
         return context
+
 
 
 class MenuCreate(CreateView):
@@ -222,7 +219,7 @@ class MenuDelete(DeleteView):
 
 class DishCreate(CreateView):
     model = Dish
-    fields = ["name",'price', "description", "dish_image"]
+    fields = ["name", "price", "description", "dish_image"]
     success_url = "/menu/list/"
 
     def form_valid(self, form):
@@ -245,13 +242,15 @@ class DishUpdate(UpdateView):
 
 # Order for Manager
 
+
 class OrderList(ListView):
     model = Order
     ordering = ["-created_at"]
+
     # to send the data of other model to the the cbv
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = orderStatusChange()
+        context["form"] = orderStatusChange()
         return context
 
 
@@ -261,40 +260,58 @@ def statusUpdate(request, order_id):
         form = orderStatusChange(request.POST, instance=order)
         if form.is_valid():
             form.save()
-            if order.status == "F" :
+            if order.status == "F":
                 bucket = order.bucket
                 order.delete()
                 bucket.delete()
-
 
             return redirect("order_list")
         else:
             orderStatusChange(instance=order)
     return redirect("order_list")
 
-def bucketToOrder(request, bucket_id):
-    bucket = Bucket.objects.get(id=bucket_id)
-    order = Order.objects.filter(bucket=bucket).first()
 
-    if not order:
-        order = Order.objects.create(bucket=bucket)
+def bucketToOrder(request, bucket_id):
+
+    bucket = Bucket.objects.get(id=bucket_id)
+
+    # If bucket is paid → create order automatically
+    if bucket.paid:
+        order, created = Order.objects.get_or_create(bucket=bucket)
+        return redirect("/order/list/")
+
+    # If bucket already has an order → do nothing
+    if Order.objects.filter(bucket=bucket).exists():
+        return redirect("/order/list/")
+
+    # Otherwise create new order
+    Order.objects.create(bucket=bucket)
 
     return redirect("/order/list/")
 
 
+
 # Bucket for Customer
 
+
 def addDish(request, dish_id):
+
     dish = Dish.objects.get(id=dish_id)
 
-    bucket = Bucket.objects.filter(user = request.user ).first()
+    bucket = Bucket.objects.filter(user=request.user).first()
 
 
     if not bucket:
-        bucket = Bucket.objects.create(user = request.user)
+        bucket = Bucket.objects.create(user=request.user)
+
+    if Order.objects.filter(bucket=bucket).exists():
+        return redirect("/menu/list/")
 
     bucket.items.add(dish)
-    return redirect('/menu/list/')
+
+    return redirect("/menu/list/")
+
+
 
 def serviceType(request, bucket_id):
     bucket = Bucket.objects.get(id=bucket_id)
@@ -312,22 +329,25 @@ def serviceType(request, bucket_id):
 
 class BucketDelete(DeleteView):
     model = Bucket
-    success_url = '/menu/list/'
-    def get_bucket(self):
-        return Bucket.objects.filter(user = self.request.user)
+    success_url = "/menu/list/"
 
+    def get_bucket(self):
+        return Bucket.objects.filter(user=self.request.user)
 
 
 # Moment Views
 
+
 class MomentList(ListView):
     model = Moment
-    ordering = ['-created_at']
+    ordering = ["-created_at"]
+
 
 class MomentCreate(CreateView):
     model = Moment
-    fields = ['file', 'description']
-    success_url = '/moments/list/'
+    fields = ["file", "description"]
+    success_url = "/moments/list/"
+
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
@@ -335,15 +355,13 @@ class MomentCreate(CreateView):
 
 class MomentUpdate(UpdateView):
     model = Moment
-    fields = ['description']
-    success_url = '/moments/list/'
+    fields = ["description"]
+    success_url = "/moments/list/"
 
 
 class MomentDelete(DeleteView):
     model = Moment
-    success_url = '/moments/list/'
+    success_url = "/moments/list/"
 
 
-
-
-#PAYMENTS
+# PAYMENTS

@@ -47,19 +47,15 @@
     </ul>
 
 <p>Total = {{order.bucket.total_price}} BHD </p>
-  <form method='post' action='{% url 'checkout' order.id %}'>
-    {% csrf_token %}
-    <button type='submit'>Checkout</button>
-  </form>
+
 <p>Service : {{order.bucket.get_service_type_display}}
   {% if order.status == 'F' %}
       <form method="POST" action="{% url 'bucketOrder_delete' order.bucket.id %}">
         {% csrf_token %}
         <button type="submit">Clear Bucket</button>
       </form>
-
-
       {% endif %}
+
       {% endif %}
 {% endfor %}
 {% else %}

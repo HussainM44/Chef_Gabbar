@@ -58,26 +58,34 @@
       <p>Total: {{bucket.total_price}} BHD </p>
 
       {% if bucket.service_type == 'P' %}
-  <form method="post" action="{% url 'service_type' bucket.id %}">
+  <form method="post" action="{% url 'service_type' bucket.id  %}" class='service'>
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Submit</button>
-  </form>
-{% else %}
-  <p id='service'>Service Type : {{ bucket.get_service_type_display }}</p>
-{% endif %}
-
-{% if bucket.id not in bucket_added %}
-    <form method="POST" action="{% url 'bucketToOrder' bucket.id %}">
-      {% csrf_token %}
-      <button type='submit'>Add to Cart</button>
-    </form>
-    <form method="post" action="{% url 'bucket_delete' bucket.id %}">
+        <form method="post" action="{% url 'bucket_delete' bucket.id %}">
         {% csrf_token %}
         <button type='submit'>Clear Bucket</button>
       </form>
+  </form>
+{% else %}
+  <p class='service'>Service Type : {{ bucket.get_service_type_display }}</p>
+{% endif %}
+{% if bucket.service_type != 'P' %}
+
+{% if bucket.id not in bucket_added %}
+
+    <form method='post' action='{% url 'checkout' bucket.id %}'>
+    {% csrf_token %}
+    <button type='submit'>Pay Online</button>
+  </form>
+  <form method="POST" action="{% url 'bucketToOrder' bucket.id %}">
+      {% csrf_token %}
+      <button type='submit'>Cash</button>
+    </form>
+
   {% else %}
     <p>Added to Cart ✅</p>
+  {% endif %}
   {% endif %}
 
 

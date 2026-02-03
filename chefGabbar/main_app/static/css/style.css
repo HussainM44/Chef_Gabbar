@@ -121,11 +121,17 @@ h2 ~ p {
 
 .a {
 color: #8b0000;
+
 }
 
-#service{
-  color: #8b0000;
+.service {
+    background-color: red;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px; /* optional: rounded corners */
+    display: inline-block; /* keeps the box size to text */
 }
+
 .navbar-brand {
     font-size:1.3rem;                     /* slightly bigger for prominence */
     font-weight: 900;                       /* extra bold */

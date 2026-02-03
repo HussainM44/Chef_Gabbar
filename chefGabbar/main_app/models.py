@@ -9,7 +9,7 @@ from django.utils import timezone
 
 
 SERVICES = (
-    ("P","In-Progress"),
+    ("P","-----"),
     ("R", "Dine-in"),
     ("D", "Delivery"),
     ("T","Take Away"),
@@ -56,7 +56,9 @@ class Dish(models.Model):
 class Bucket(models.Model):
     user = models.ForeignKey(User , on_delete=models.CASCADE)
     items = models.ManyToManyField(Dish)
+    paid = models.BooleanField(default=False)
     service_type = models.CharField(max_length= 10 , choices= SERVICES , default='P')
+    created_at = models.DateTimeField(default=timezone.now)
     def total_price(self):
         total = 0
         for items in self.items.all():
