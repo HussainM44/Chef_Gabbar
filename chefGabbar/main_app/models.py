@@ -80,7 +80,7 @@ class Order(models.Model):
 class CompletedOrder(models.Model):
     user = models.CharField(max_length=50)
     payment = models.BooleanField(default=False)
-    total = models.IntegerField()
+    total = models.DecimalField(max_digits=3 ,decimal_places=1)
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

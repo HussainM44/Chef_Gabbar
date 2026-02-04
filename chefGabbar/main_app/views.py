@@ -39,7 +39,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 # authentication    4000 0025 0000 3155
 # declined          4000 0000 0000 9995
 
-
+# same as csrf token
 @method_decorator(csrf_exempt, name="dispatch")
 class CreateCheckoutSessionView(View):
 
@@ -51,7 +51,7 @@ class CreateCheckoutSessionView(View):
 
         success_url = f"{domain}success/?bucket_id={bucket.id}"
         cancel_url = f"{domain}cancel/"
-
+        # for checkout session from stripe api
         checkout_session = stripe.checkout.Session.create(
             line_items=[
                 {
@@ -270,8 +270,10 @@ class OrderList(ListView):
 
     # to send the data of other model to the the cbv
     def get_context_data(self, **kwargs):
+        completed_order = CompletedOrder.objects.all()
         context = super().get_context_data(**kwargs)
         context["form"] = orderStatusChange()
+        context["completed_order"] = completed_order
         return context
 
 
@@ -285,7 +287,7 @@ def statusUpdate(request, order_id):
                 bucket = order.bucket
                 user = str(bucket.user.username)
                 payment = str(bucket.paid)
-                total = int(bucket.total_price())
+                total = float(bucket.total_price())
                 completedOrder = CompletedOrder.objects.create(
                 user = user,
                 total = total,

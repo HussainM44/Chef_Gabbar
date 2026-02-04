@@ -34,10 +34,25 @@
   <button type= 'submit' >Change Status</button>
 </form>
 
+
+
 {% endfor %}
 {% else %}
 <h3>No Orders IN Yet </h3>
 <h4>Orders are on the way</h4>
+{% if completed_order %}
+<h2> Completed Orders</h2>
+{% for completedOrder in  completed_order %}
+
+<h4>Date: {{completedOrder.created_at}}</h4>
+{% if payment %}
+<p>Total Price - {{completedOrder.total}} BHD  (Paid Online)<p>
+{% elif not payment %}
+<p>Total Price - {{completedOrder.total}} BHD (Paid Cash)<p>
+{% endif %}
+
+{% endfor %}
+{% endif %}
 
 {% endif %}
 
