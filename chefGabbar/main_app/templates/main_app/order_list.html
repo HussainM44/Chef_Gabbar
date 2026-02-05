@@ -44,11 +44,12 @@
 <h2> Completed Orders</h2>
 {% for completedOrder in  completed_order %}
 
-<h4>Date: {{completedOrder.created_at}}</h4>
-{% if payment %}
-<p>Total Price - {{completedOrder.total}} BHD  (Paid Online)<p>
-{% elif not payment %}
-<p>Total Price - {{completedOrder.total}} BHD (Paid Cash)<p>
+<h4>Date: {{completedOrder.created_at|date:"M d, Y H:i"}}</h4>
+<h4>Customer: {{completedOrder.user}}</h4>
+{% if completedOrder.payment %}
+<p>Total Price - {{completedOrder.total}} BHD  (Paid Online)</p>
+{% else %}
+<p>Total Price - {{completedOrder.total}} BHD (Paid Cash)</p>
 {% endif %}
 
 {% endfor %}

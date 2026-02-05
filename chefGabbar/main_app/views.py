@@ -286,12 +286,12 @@ def statusUpdate(request, order_id):
             if order.status == "F":
                 bucket = order.bucket
                 user = str(bucket.user.username)
-                payment = str(bucket.paid)
+                payment = bucket.paid  # Keep as boolean, don't convert to string
                 total = float(bucket.total_price())
                 completedOrder = CompletedOrder.objects.create(
-                user = user,
-                total = total,
-                payment= payment,
+                    user=user,
+                    total=total,
+                    payment=payment,
                 )
 
                 order.delete()

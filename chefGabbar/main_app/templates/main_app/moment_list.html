@@ -10,10 +10,16 @@
 {% load static %}
 <a href="{% url 'profile' moment.user.id %}">
 <div style="display: flex; align-items: center; gap: 8px;">
-    <img
-        src="{% static user.profile.image.url|cut:'main_app/static/' %}"
-        alt="User Image"
-        style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
+    {% if moment.user.profile.image %}
+        <img
+            src="{{ moment.user.profile.image.url }}"
+            alt="{{ moment.user.username }}"
+            style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
+    {% else %}
+        <div style="width: 24px; height: 24px; border-radius: 50%; background-color: #8b0000; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">
+            {{ moment.user.username|slice:":1"|upper }}
+        </div>
+    {% endif %}
     <h3 style="margin: 0; font-size: 16px;">{{ moment.user.username }}</h3>
 </div>
 
@@ -21,16 +27,21 @@
 
     <p>{{ moment.description }}</p>
 
-      {% if moment.file %}
-    {% if moment.file.url %}'
-      <video width="320" controls>
-        <source src="{{ moment.file.url }}" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-    {% endif %}
+    {% if moment.file %}
+        {% load static %}
+        {% if '.mp4' in moment.file.url or '.webm' in moment.file.url or '.ogg' in moment.file.url or '.mov' in moment.file.url or '.avi' in moment.file.url %}
+            <video width="100%" max-width="640px" controls>
+                <source src="{{ moment.file.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        {% elif '.jpg' in moment.file.url or '.jpeg' in moment.file.url or '.png' in moment.file.url or '.gif' in moment.file.url %}
+            <img src="{{ moment.file.url }}" alt="Moment image" style="max-width: 640px; width: 100%; height: auto;">
+        {% else %}
+            <p>File: <a href="{{ moment.file.url }}" target="_blank">View File</a></p>
+        {% endif %}
     {% else %}
-      <h4>No file found</h4>
-  {% endif %}
+        <p style="color: #888;">No media attached</p>
+    {% endif %}
 
       {% if moment.user == request.user %}
               <a href='{% url "moment_update" moment.pk %}'>Edit Moment</a>

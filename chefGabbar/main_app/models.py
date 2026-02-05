@@ -27,7 +27,7 @@ STATUS = (
 
 class Profile(models.Model):
     user = models.OneToOneField(User , on_delete=models.CASCADE)
-    image = models.ImageField(upload_to="main_app/static/uploads", default="")
+    image = models.ImageField(upload_to="uploads/profiles", default="", blank=True)
     address = models.CharField(max_length=50 )
 
     def __str__(self):
@@ -48,7 +48,7 @@ class Dish(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(max_length=100)
     price = models.DecimalField( max_digits=3 ,decimal_places=1)
-    dish_image = models.ImageField(upload_to="main_app/static/uploads", default= "")
+    dish_image = models.ImageField(upload_to="uploads/dishes", default="", blank=True)
 
     def __str__(self):
         return f"{self.name}"
@@ -89,7 +89,7 @@ class CompletedOrder(models.Model):
 class Moment(models.Model):
     user = models.ForeignKey(User , on_delete=models.CASCADE)
     description = models.TextField(max_length=50 , null=True, blank=True)
-    file = models.FileField(upload_to="main_app/static/uploads", blank=True, null=True)
+    file = models.FileField(upload_to="uploads/moments", blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
