@@ -106,14 +106,14 @@
 <p>Total = {{order.bucket.total_price}} BHD </p>
 
 <p>Service : {{order.bucket.get_service_type_display}}
-{% if order.can_delete %}
+{% comment %} {% if order.can_delete %} {% endcomment %}
 
   <form method="post" action="{% url 'order_cancel' order.id %}">
     {% csrf_token %}
     <p>Cancel order within 3 mins</p>
     <button type="submit">Cancel Order</button>
   </form>
-  {% endif %}
+  {% comment %} {% endif %} {% endcomment %}
 
       {% endif %}
 {% endfor %}

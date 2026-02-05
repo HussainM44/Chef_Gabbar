@@ -105,7 +105,9 @@
       {% for item in bucket.items.all %}
 
         <p>{{ item.name }} - {{ item.price }}  </p>
+        {% if bucket.items.exists and bucket.service_type == "P" %}
         <a href="{% url 'single_item_delete' bucket.id item.id %}">✖️</a>
+        {% endif %}
       {% endfor %}
 
       <p>Total: {{bucket.total_price}} BHD </p>
@@ -115,10 +117,10 @@
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Submit</button>
+          </form>
         <form method="post" action="{% url 'bucket_delete' bucket.id %}">
         {% csrf_token %}
         <button type='submit'>Clear Bucket</button>
-      </form>
   </form>
 {% else %}
   <p class='service'>Service Type : {{ bucket.get_service_type_display }}</p>
@@ -135,6 +137,10 @@
       {% csrf_token %}
       <button type='submit'>Pay Cash</button>
     </form>
+     <form method="post" action="{% url 'bucket_delete' bucket.id %}">
+        {% csrf_token %}
+        <button type='submit'>Clear Bucket</button>
+  </form>
 
   {% else %}
     <p>Added to Cart ✅</p>

@@ -92,13 +92,23 @@ class CompletedOrder(models.Model):
     def __str__(self):
         return f'{self.user} has paid {self.total}'
 
+
+
 class Moment(models.Model):
     user = models.ForeignKey(User , on_delete=models.CASCADE)
     description = models.TextField(max_length=50 , null=True, blank=True)
     file = models.FileField(upload_to="uploads/moments", blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
 
+
     def __str__(self):
         return f'{self.user},s moment'
 
 
+class Comment(models.Model):
+    user = models.ForeignKey(User ,on_delete=models.CASCADE)
+    moment = models.ForeignKey(Moment, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
+    review = models.CharField(max_length=150)
+
+    def __str__(self):
+        return f'{self.user} commented on {self.moment}'

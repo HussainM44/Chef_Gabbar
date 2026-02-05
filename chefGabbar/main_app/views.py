@@ -5,7 +5,7 @@ from django.contrib.auth.forms import (
     PasswordChangeForm,
 )
 from django.contrib.auth.models import User
-from .models import Profile, Menu, Dish, Order, Moment, Bucket, CompletedOrder
+from .models import Profile, Menu, Dish, Order, Moment, Bucket, CompletedOrder, Comment
 from django.http import JsonResponse
 
 # to log in new user and create a auth session
@@ -18,7 +18,7 @@ from .forms import (
     userUpdateForm,
     orderStatusChange,
     serviceTypeForm,
-    CompleteOrderForm,
+    commentsForm,
 )
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
@@ -316,7 +316,7 @@ def bucketToOrder(request, bucket_id):
 
 def orderCancellation(request, order_id):
     order = Order.objects.get(id = order_id , bucket__user =request.user)
-    bucket = bucket.order
+    bucket = order.bucket
     if request.method == 'POST' and order.can_delete():
         order.delete()
         bucket.delete()
@@ -382,6 +382,10 @@ def singleItemDelete(request , bucket_id, item_id):
 class MomentList(ListView):
     model = Moment
     ordering = ["-created_at"]
+    def get_context_data(self, **kwargs):
+        context =super().get_context_data(**kwargs)
+        context['form'] = commentsForm()
+        return context
 
 
 class MomentCreate(CreateView):
@@ -405,4 +409,23 @@ class MomentDelete(DeleteView):
     success_url = "/moments/list/"
 
 
-# PAYMENTS
+# Comments
+
+def createComment(request, moment_id ):
+    moment = Moment.objects.get(id = moment_id)
+    user = request.user
+    if request.method == "POST":
+        form = commentsForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = user
+            comment.moment = moment
+            comment.save()
+    else:
+        form = commentsForm(request.POST)
+
+    return redirect("/moments/list/")
+
+class CommentDelete(DeleteView):
+    model= Comment
+    success_url = "/moments/list/"

@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from .models import Profile , Menu , Dish , Order, Bucket, CompletedOrder
+from .models import Profile , Menu , Dish , Order, Bucket, Comment
 from django.contrib.auth.models import User
 
 
@@ -25,7 +25,7 @@ class serviceTypeForm(ModelForm):
         model = Bucket
         fields = ['service_type']
 
-class CompleteOrderForm(ModelForm):
+class commentsForm(ModelForm):
     class Meta:
-        model = CompletedOrder
-        fields = '__all__'
+        model = Comment
+        fields = ['review']

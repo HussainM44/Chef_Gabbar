@@ -30,18 +30,31 @@
     {% if moment.file %}
         {% load static %}
         {% if '.mp4' in moment.file.url or '.webm' in moment.file.url or '.ogg' in moment.file.url or '.mov' in moment.file.url or '.avi' in moment.file.url %}
-            <video width="100%" max-width="640px" controls>
+            <video width="100%" max-width="320px" controls>
                 <source src="{{ moment.file.url }}" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
         {% elif '.jpg' in moment.file.url or '.jpeg' in moment.file.url or '.png' in moment.file.url or '.gif' in moment.file.url %}
             <img src="{{ moment.file.url }}" alt="Moment image" style="max-width: 640px; width: 100%; height: auto;">
-        {% else %}
-            <p>File: <a href="{{ moment.file.url }}" target="_blank">View File</a></p>
         {% endif %}
-    {% else %}
-        <p style="color: #888;">No media attached</p>
     {% endif %}
+        {% for comment in moment.comments.all %}
+            <p><strong>{{ comment.user.username }}:</strong> {{ comment.review }}</p>
+            {% if comment.user == request.user %}
+            <form method="POST" action="{% url 'delete_comment' comment.id %}">
+                {% csrf_token %}
+                <button type='submit'>Delete </button>
+            </form>
+            {% endif %}
+        {% endfor %}
+
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'create_comment' moment.id %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Submit</button>
+            </form>
+        {% endif %}
 
       {% if moment.user == request.user %}
               <a href='{% url "moment_update" moment.pk %}'>Edit Moment</a>

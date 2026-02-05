@@ -43,6 +43,10 @@ urlpatterns = [
     path('moments/<int:pk>/update/', views.MomentUpdate.as_view(), name='moment_update'),
     path('moments/<int:pk>/delete/', views.MomentDelete.as_view(), name='moment_delete'),
 
+    # Comments
+    path("moments/<int:moment_id>/comment/create/", views.createComment , name = 'create_comment'),
+    path("comment/<int:pk>/delete/", views.CommentDelete.as_view() , name = 'delete_comment'),
+
     # PAYMENT URL
     path("checkout/<int:bucket_id>/", views.CreateCheckoutSessionView.as_view(), name = 'checkout'),
     path('success/',views.success, name ='success' ),
