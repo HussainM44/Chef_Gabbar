@@ -91,27 +91,29 @@
 {% if order_list %}
 {% for order in order_list %}
   {% if order.bucket.user == request.user %}
-    <h3>Status : {{order.get_status_display}}
+    <h3>Status : {{order.get_status_display}}</h3>
     <ul>
     {% for item in order.bucket.items.all %}
       <li>{{ item.name }} - {{ item.price }} BHD</li>
     {% endfor %}
     </ul>
 
-<p>Total = {{order.bucket.total_price}} BHD </p>
 {% if order.bucket.paid %}
 <h4>Paid Online</h4>
 {% else %}
 <h4>Payment Later</h4>
 {% endif %}
+<p>Total = {{order.bucket.total_price}} BHD </p>
 
 <p>Service : {{order.bucket.get_service_type_display}}
-  {% if order.status == 'F' %}
-      <form method="POST" action="{% url 'bucketOrder_delete' order.bucket.id %}">
-        {% csrf_token %}
-        <button type="submit">Clear Bucket</button>
-      </form>
-      {% endif %}
+{% if order.can_delete %}
+
+  <form method="post" action="{% url 'order_cancel' order.id %}">
+    {% csrf_token %}
+    <p>Cancel order within 3 mins</p>
+    <button type="submit">Cancel Order</button>
+  </form>
+  {% endif %}
 
       {% endif %}
 {% endfor %}

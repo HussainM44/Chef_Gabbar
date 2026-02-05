@@ -286,7 +286,7 @@ def statusUpdate(request, order_id):
             if order.status == "F":
                 bucket = order.bucket
                 user = str(bucket.user.username)
-                payment = bucket.paid  
+                payment = bucket.paid
                 total = float(bucket.total_price())
                 completedOrder = CompletedOrder.objects.create(
                     user=user,
@@ -313,6 +313,18 @@ def bucketToOrder(request, bucket_id):
         order = Order.objects.create(bucket=bucket)
 
     return redirect("/order/list/")
+
+def orderCancellation(request, order_id):
+    order = Order.objects.get(id = order_id , bucket__user =request.user)
+    bucket = bucket.order
+    if request.method == 'POST' and order.can_delete():
+        order.delete()
+        bucket.delete()
+
+
+    return redirect('/order/list/')
+
+
 
 
 # Bucket for Customer
@@ -355,6 +367,7 @@ class BucketDelete(DeleteView):
 
     def get_bucket(self):
         return Bucket.objects.filter(user=self.request.user)
+
 
 def singleItemDelete(request , bucket_id, item_id):
     bucket = Bucket.objects.get(id = bucket_id)

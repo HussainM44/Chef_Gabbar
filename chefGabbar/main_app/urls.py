@@ -28,6 +28,7 @@ urlpatterns = [
     # Order List for Manager
     path('order/list/', views.OrderList.as_view(),name = 'order_list'),
     path('order/<int:order_id>/update/', views.statusUpdate, name = 'status_update'),
+    path('order/<int:order_id>/cancel/', views.orderCancellation, name = 'order_cancel'),
 
     # Bucket For Customer
     path('dish_bucket/add/<int:dish_id>/', views.addDish, name= 'add_dish'),

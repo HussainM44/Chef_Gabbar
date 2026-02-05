@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
+from datetime import timedelta
+
 
 # Create your models here.
 
@@ -76,6 +78,10 @@ class Order(models.Model):
 
     def __str__(self):
         return f"{self.bucket.id}"
+    # if current time is more than time created + 3 mins it is true
+    def can_delete(self):
+        return timezone.now() <= self.created_at + timedelta(minutes=3)
+
 
 class CompletedOrder(models.Model):
     user = models.CharField(max_length=50)
