@@ -286,7 +286,7 @@ def statusUpdate(request, order_id):
             if order.status == "F":
                 bucket = order.bucket
                 user = str(bucket.user.username)
-                payment = bucket.paid  # Keep as boolean, don't convert to string
+                payment = bucket.paid  
                 total = float(bucket.total_price())
                 completedOrder = CompletedOrder.objects.create(
                     user=user,
@@ -355,6 +355,12 @@ class BucketDelete(DeleteView):
 
     def get_bucket(self):
         return Bucket.objects.filter(user=self.request.user)
+
+def singleItemDelete(request , bucket_id, item_id):
+    bucket = Bucket.objects.get(id = bucket_id)
+    bucket.items.remove(item_id)
+    return redirect('/menu/list/')
+
 
 
 # Moment Views

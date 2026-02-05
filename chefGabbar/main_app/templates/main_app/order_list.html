@@ -35,26 +35,47 @@
 </form>
 
 
-
-{% endfor %}
-{% else %}
-<h3>No Orders IN Yet </h3>
-<h4>Orders are on the way</h4>
 {% if completed_order %}
 <h2> Completed Orders</h2>
 {% for completedOrder in  completed_order %}
 
 <h4>Date: {{completedOrder.created_at|date:"M d, Y H:i"}}</h4>
 <h4>Customer: {{completedOrder.user}}</h4>
+
 {% if completedOrder.payment %}
 <p>Total Price - {{completedOrder.total}} BHD  (Paid Online)</p>
 {% else %}
 <p>Total Price - {{completedOrder.total}} BHD (Paid Cash)</p>
 {% endif %}
+<hr>
+
 
 {% endfor %}
 {% endif %}
 
+
+{% endfor %}
+{% else %}
+<h3>No Orders IN Yet </h3>
+<h4>Orders are on the way</h4>
+
+{% if completed_order %}
+<h2> Completed Orders</h2>
+{% for completedOrder in  completed_order %}
+
+<h4>Date: {{completedOrder.created_at|date:"M d, Y H:i"}}</h4>
+<h4>Customer: {{completedOrder.user}}</h4>
+
+{% if completedOrder.payment %}
+<p>Total Price - {{completedOrder.total}} BHD  (Paid Online)</p>
+{% else %}
+<p>Total Price - {{completedOrder.total}} BHD (Paid Cash)</p>
+{% endif %}
+<hr>
+
+
+{% endfor %}
+{% endif %}
 {% endif %}
 
 
@@ -100,6 +121,27 @@
   <h3>Checkout the menu</h3>
 </a>
 {% endif %}
+{% if completed_order %}
+  <h2>Completed Orders</h2>
+
+  {% for completedOrder in completed_order %}
+    {% if completedOrder.user == request.user.username %}
+
+      <h4>Date: {{ completedOrder.created_at|date:"M d, Y H:i" }}</h4>
+      <h4>Customer: {{ completedOrder.user }}</h4>
+
+      {% if completedOrder.payment %}
+        <p>Total Price - {{ completedOrder.total }} BHD (Paid Online)</p>
+      {% else %}
+        <p>Total Price - {{ completedOrder.total }} BHD (Paid Cash)</p>
+      {% endif %}
+
+      <hr>
+
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
 
 {% endif %}
 {% endblock %}

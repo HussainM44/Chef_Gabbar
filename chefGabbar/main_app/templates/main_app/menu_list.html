@@ -101,10 +101,11 @@
 
     {% for bucket in buckets %}
       <h3 class='a'>Items:</h3>
-
+      {% if bucket.items.exists %}
       {% for item in bucket.items.all %}
 
         <p>{{ item.name }} - {{ item.price }}  </p>
+        <a href="{% url 'single_item_delete' bucket.id item.id %}">✖️</a>
       {% endfor %}
 
       <p>Total: {{bucket.total_price}} BHD </p>
@@ -137,6 +138,7 @@
 
   {% else %}
     <p>Added to Cart ✅</p>
+  {% endif %}
   {% endif %}
   {% endif %}
 
