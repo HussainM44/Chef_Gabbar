@@ -5,7 +5,7 @@ from django.contrib.auth.forms import (
     PasswordChangeForm,
 )
 from django.contrib.auth.models import User
-from .models import Profile, Menu, Dish, Order, Moment, Bucket, CompletedOrder, Comment
+from .models import Profile, Menu, Dish, Order, Moment, Bucket, CompletedOrder, Comment, ItemQty
 from django.http import JsonResponse
 
 # to log in new user and create a auth session
@@ -29,6 +29,9 @@ from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -37,11 +40,11 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 # succeeds          4242 4242 4242 4242
 # authentication    4000 0025 0000 3155
-# declined          4000 0000 0000 9995
+# declined          4000 0000 0000 LoginRequiredMixin, 9995
 
 # same as csrf token
 @method_decorator(csrf_exempt, name="dispatch")
-class CreateCheckoutSessionView(View):
+class CreateCheckoutSessionView(LoginRequiredMixin, View):
 
     def post(self, request, bucket_id):
 
@@ -72,7 +75,7 @@ class CreateCheckoutSessionView(View):
 
         return redirect(checkout_session.url)
 
-
+@login_required
 def success(request):
     bucket_id = request.GET.get("bucket_id")
     if bucket_id:
@@ -82,7 +85,7 @@ def success(request):
         Order.objects.get_or_create(bucket=bucket)
     return redirect("/order/list/")
 
-
+@login_required
 def failed(request):
     return HttpResponse("Payment Failed ")
 
@@ -134,7 +137,7 @@ def signup(request):
 # User Profile views
 
 
-class UserDetail(DetailView):
+class UserDetail(LoginRequiredMixin, DetailView):
     model = User
 
     def get_context_data(self, **kwargs):
@@ -142,7 +145,7 @@ class UserDetail(DetailView):
         context["moments"] = Moment.objects.filter(user=self.object)
         return context
 
-
+@login_required
 def userUpdate(request, user_id):
     user = User.objects.get(id=user_id)
     profile = Profile.objects.get(user_id=user_id)
@@ -187,7 +190,7 @@ def userUpdate(request, user_id):
 # Menu Views
 
 
-class MenuList(ListView):
+class MenuList(LoginRequiredMixin,ListView):
     model = Menu
 
     def get_context_data(self, **kwargs):
@@ -216,7 +219,7 @@ class MenuList(ListView):
         return context
 
 
-class MenuCreate(CreateView):
+class MenuCreate(LoginRequiredMixin,CreateView):
     model = Menu
     fields = ["cuisine"]
     success_url = "/menu/<int:pk>/dish/create/"
@@ -233,12 +236,12 @@ class MenuCreate(CreateView):
         return reverse("dish_create", kwargs={"pk": self.object.pk})
 
 
-class MenuDelete(DeleteView):
+class MenuDelete(LoginRequiredMixin,DeleteView):
     model = Menu
     success_url = "/menu/list/"
 
 
-class DishCreate(CreateView):
+class DishCreate(LoginRequiredMixin,CreateView):
     model = Dish
     fields = ["name", "price", "description", "dish_image"]
     success_url = "/menu/list/"
@@ -250,12 +253,12 @@ class DishCreate(CreateView):
         return super().form_valid(form)
 
 
-class DishDelete(DeleteView):
+class DishDelete(LoginRequiredMixin,DeleteView):
     model = Dish
     success_url = "/menu/list/"
 
 
-class DishUpdate(UpdateView):
+class DishUpdate(LoginRequiredMixin,UpdateView):
     model = Dish
     fields = ["name", "price", "description", "dish_image"]
     success_url = "/menu/list/"
@@ -264,7 +267,7 @@ class DishUpdate(UpdateView):
 # Order for Manager
 
 
-class OrderList(ListView):
+class OrderList(LoginRequiredMixin,ListView):
     model = Order
     ordering = ["-created_at"]
 
@@ -276,7 +279,7 @@ class OrderList(ListView):
         context["completed_order"] = completed_order
         return context
 
-
+@login_required
 def statusUpdate(request, order_id):
     order = Order.objects.get(id=order_id)
     if request.method == "POST":
@@ -304,7 +307,7 @@ def statusUpdate(request, order_id):
             orderStatusChange(instance=order)
     return redirect("order_list")
 
-
+@login_required
 def bucketToOrder(request, bucket_id):
     bucket = Bucket.objects.get(id=bucket_id)
 
@@ -314,6 +317,7 @@ def bucketToOrder(request, bucket_id):
 
     return redirect("/order/list/")
 
+@login_required
 def orderCancellation(request, order_id):
     order = Order.objects.get(id = order_id , bucket__user =request.user)
     bucket = order.bucket
@@ -329,49 +333,57 @@ def orderCancellation(request, order_id):
 
 # Bucket for Customer
 
-
+@login_required
 def addDish(request, dish_id):
-
     dish = Dish.objects.get(id=dish_id)
-
-    bucket = Bucket.objects.filter(user=request.user).first()
-
+    bucket = Bucket.objects.filter(user=request.user, paid=False).first()
     if not bucket:
         bucket = Bucket.objects.create(user=request.user)
 
     if Order.objects.filter(bucket=bucket).exists():
         return redirect("/menu/list/")
 
-    bucket.items.add(dish)
+    item = ItemQty.objects.filter(bucket=bucket, dish=dish).first()
+    if item:
+        item.quantity += 1
+        item.save()
+    else:
+        ItemQty.objects.create(bucket=bucket, dish=dish, quantity=1)
 
     return redirect("/menu/list/")
 
+@login_required
+def decreaseDish(request, bucket_id, dish_id):
+    item = ItemQty.objects.filter(bucket_id=bucket_id, dish_id=dish_id).first()
+    if item:
+        item.quantity -= 1
+        if item.quantity <= 0:
+            item.delete()
+        else:
+            item.save()
+    return redirect("/menu/list/")
 
+
+@login_required
 def serviceType(request, bucket_id):
     bucket = Bucket.objects.get(id=bucket_id)
-
     if request.method == "POST":
         form = serviceTypeForm(request.POST, instance=bucket)
         if form.is_valid():
             form.save()
-            return redirect("/menu/list/")
-    else:
-        form = serviceTypeForm(instance=bucket)
-
     return redirect("/menu/list/")
 
 
-class BucketDelete(DeleteView):
+
+class BucketDelete(LoginRequiredMixin,DeleteView):
     model = Bucket
     success_url = "/menu/list/"
 
-    def get_bucket(self):
-        return Bucket.objects.filter(user=self.request.user)
-
-
-def singleItemDelete(request , bucket_id, item_id):
-    bucket = Bucket.objects.get(id = bucket_id)
-    bucket.items.remove(item_id)
+@login_required
+def singleItemDelete(request , bucket_id, dish_id):
+    item = ItemQty.objects.filter(bucket_id=bucket_id, dish_id=dish_id).first()
+    if item:
+        item.delete()
     return redirect('/menu/list/')
 
 
@@ -379,7 +391,7 @@ def singleItemDelete(request , bucket_id, item_id):
 # Moment Views
 
 
-class MomentList(ListView):
+class MomentList(LoginRequiredMixin,ListView):
     model = Moment
     ordering = ["-created_at"]
     def get_context_data(self, **kwargs):
@@ -388,7 +400,7 @@ class MomentList(ListView):
         return context
 
 
-class MomentCreate(CreateView):
+class MomentCreate(LoginRequiredMixin,CreateView):
     model = Moment
     fields = ["file", "description"]
     success_url = "/moments/list/"
@@ -398,19 +410,20 @@ class MomentCreate(CreateView):
         return super().form_valid(form)
 
 
-class MomentUpdate(UpdateView):
+class MomentUpdate(LoginRequiredMixin,UpdateView):
     model = Moment
     fields = ["description"]
     success_url = "/moments/list/"
 
 
-class MomentDelete(DeleteView):
+class MomentDelete(LoginRequiredMixin,DeleteView):
     model = Moment
     success_url = "/moments/list/"
 
 
 # Comments
 
+@login_required
 def createComment(request, moment_id ):
     moment = Moment.objects.get(id = moment_id)
     user = request.user
@@ -426,6 +439,6 @@ def createComment(request, moment_id ):
 
     return redirect("/moments/list/")
 
-class CommentDelete(DeleteView):
+class CommentDelete(LoginRequiredMixin,DeleteView):
     model= Comment
     success_url = "/moments/list/"

@@ -1,21 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.urls import reverse
 from django.utils import timezone
 from datetime import timedelta
-
-
-# Create your models here.
-
-# Variables
-
 
 SERVICES = (
     ("P","-----"),
     ("R", "Dine-in"),
     ("D", "Delivery"),
     ("T","Take Away"),
-    )
+)
 
 STATUS = (
     ("P","In-Progress"),
@@ -23,9 +16,7 @@ STATUS = (
     ('R', "Ready To Go"),
     ('D','Delivered'),
     ('F','Finished'),
-    )
-
-# User Auth
+)
 
 class Profile(models.Model):
     user = models.OneToOneField(User , on_delete=models.CASCADE)
@@ -36,8 +27,6 @@ class Profile(models.Model):
         return f'{self.user}'
 
 
-
-
 class Menu(models.Model):
     user = models.ForeignKey(User , on_delete=models.CASCADE)
     cuisine = models.CharField(max_length=50)
@@ -45,30 +34,43 @@ class Menu(models.Model):
     def __str__(self):
         return f"{self.cuisine}"
 
+
 class Dish(models.Model):
     menu = models.ForeignKey(Menu , on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     description = models.TextField(max_length=100)
-    price = models.DecimalField( max_digits=3 ,decimal_places=1)
+    price = models.DecimalField(max_digits=5, decimal_places=2)
     dish_image = models.ImageField(upload_to="uploads/dishes", default="", blank=True)
 
     def __str__(self):
         return f"{self.name}"
 
+
 class Bucket(models.Model):
-    user = models.ForeignKey(User , on_delete=models.CASCADE)
-    items = models.ManyToManyField(Dish)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # through is creating an extra table btw bucket and order to add quantity
+    items = models.ManyToManyField(Dish, through='ItemQty')
     paid = models.BooleanField(default=False)
-    service_type = models.CharField(max_length= 10 , choices= SERVICES , default='P')
+    service_type = models.CharField(max_length=10, choices=SERVICES, default='P')
     created_at = models.DateTimeField(default=timezone.now)
+
     def total_price(self):
-        total = 0
-        for items in self.items.all():
-            total += items.price
-        return total
+        return sum(item.total() for item in self.itemqty_set.all())
 
     def __str__(self):
         return f"Bucket for {self.user.username}"
+
+
+class ItemQty(models.Model):
+    bucket = models.ForeignKey(Bucket, on_delete=models.CASCADE)
+    dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    def total(self):
+        return self.dish.price * self.quantity
+
+    def __str__(self):
+        return f"{self.quantity} x {self.dish.name}"
 
 
 class Order(models.Model):
@@ -78,7 +80,7 @@ class Order(models.Model):
 
     def __str__(self):
         return f"{self.bucket.id}"
-    # if current time is more than time created + 3 mins it is true
+
     def can_delete(self):
         return timezone.now() <= self.created_at + timedelta(minutes=3)
 
@@ -86,12 +88,11 @@ class Order(models.Model):
 class CompletedOrder(models.Model):
     user = models.CharField(max_length=50)
     payment = models.BooleanField(default=False)
-    total = models.DecimalField(max_digits=3 ,decimal_places=1)
+    total = models.DecimalField(max_digits=5, decimal_places=2)
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f'{self.user} has paid {self.total}'
-
 
 
 class Moment(models.Model):
@@ -99,7 +100,6 @@ class Moment(models.Model):
     description = models.TextField(max_length=50 , null=True, blank=True)
     file = models.FileField(upload_to="uploads/moments", blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
-
 
     def __str__(self):
         return f'{self.user},s moment'

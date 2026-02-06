@@ -95,63 +95,83 @@
 {% comment %}
 -------------Bucket to add dishes to order ----------
  {% endcomment %}
+
 {% if buckets %}
-  <div id="bucket-container">
-    <h2 class='a' >Bucket</h2>
+<div id="bucket-container">
+  <h2 class="a">Bucket</h2>
 
-    {% for bucket in buckets %}
-      <h3 class='a'>Items:</h3>
-      {% if bucket.items.exists %}
-      {% for item in bucket.items.all %}
+  {% for bucket in buckets %}
+    <h3 class="a">Items:</h3>
 
-        <p>{{ item.name }} - {{ item.price }}  </p>
-        {% if bucket.items.exists and bucket.service_type == "P" %}
-        <a href="{% url 'single_item_delete' bucket.id item.id %}">✖️</a>
+    {% if bucket.itemqty_set.all %}
+      {% for item in bucket.itemqty_set.all %}
+        {% if item.dish %}
+          <p>
+            <strong>{{ item.dish.name }} </strong>
+            {{ item.quantity }} × {{ item.dish.price|floatformat:2 }} BHD =
+            {{ item.total|floatformat:2 }} BHD
+          </p>
+
+          {% if bucket.service_type == "P" %}
+            <form method="POST" action="{% url 'add_dish' item.dish.id %}" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit">➕</button>
+            </form>
+
+            <form method="POST" action="{% url 'decrease_dish' bucket.id item.dish.id %}" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit">➖</button>
+            </form>
+
+            <form method="POST" action="{% url 'single_item_delete' bucket.id item.dish.id %}" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit">✖️</button>
+            </form>
+          {% endif %}
+
+          <hr>
         {% endif %}
       {% endfor %}
 
-      <p>Total: {{bucket.total_price}} BHD </p>
+      <p> <strong>Total: {{ bucket.total_price|floatformat:2 }} BHD </strong></p>
 
       {% if bucket.service_type == 'P' %}
-  <form method="post" action="{% url 'service_type' bucket.id  %}" class='service'>
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit</button>
+        <form method="POST" action="{% url 'service_type' bucket.id %}" class="service">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit">Submit</button>
+        </form>
+
+        <form method="POST" action="{% url 'bucket_delete' bucket.id %}">
+          {% csrf_token %}
+          <button type="submit">Clear Bucket</button>
+        </form>
+
+      {% else %}
+        <p class="service">Service Type: {{ bucket.get_service_type_display }}</p>
+
+        {% if bucket.id not in bucket_added %}
+          <form method="POST" action="{% url 'checkout' bucket.id %}">
+            {% csrf_token %}
+            <button type="submit">Pay Online</button>
           </form>
-        <form method="post" action="{% url 'bucket_delete' bucket.id %}">
-        {% csrf_token %}
-        <button type='submit'>Clear Bucket</button>
-  </form>
-{% else %}
-  <p class='service'>Service Type : {{ bucket.get_service_type_display }}</p>
-{% endif %}
-{% if bucket.service_type != 'P' %}
 
-{% if bucket.id not in bucket_added %}
+          <form method="POST" action="{% url 'bucketToOrder' bucket.id %}">
+            {% csrf_token %}
+            <button type="submit">Pay Cash</button>
+          </form>
 
-    <form method='post' action='{% url 'checkout' bucket.id %}'>
-    {% csrf_token %}
-    <button type='submit'>Pay Online</button>
-  </form>
-  <form method="POST" action="{% url 'bucketToOrder' bucket.id %}">
-      {% csrf_token %}
-      <button type='submit'>Pay Cash</button>
-    </form>
-     <form method="post" action="{% url 'bucket_delete' bucket.id %}">
-        {% csrf_token %}
-        <button type='submit'>Clear Bucket</button>
-  </form>
-
-  {% else %}
-    <p>Added to Cart ✅</p>
-  {% endif %}
-  {% endif %}
-  {% endif %}
-
-
-
-    {% endfor %}
-  </div>
+          <form method="POST" action="{% url 'bucket_delete' bucket.id %}">
+            {% csrf_token %}
+            <button type="submit">Clear Bucket</button>
+          </form>
+        {% else %}
+          <p>Added to Cart ✅</p>
+        {% endif %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+</div>
 {% endif %}
 
 
