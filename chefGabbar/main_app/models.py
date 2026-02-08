@@ -51,7 +51,7 @@ class Bucket(models.Model):
     # through is creating an extra table btw bucket and order to add quantity
     items = models.ManyToManyField(Dish, through='ItemQty')
     paid = models.BooleanField(default=False)
-    service_type = models.CharField(max_length=10, choices=SERVICES, default='P')
+    service_type = models.CharField(max_length=10, choices=SERVICES, default='P', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
 
     def total_price(self):

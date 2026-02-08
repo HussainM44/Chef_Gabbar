@@ -33,25 +33,8 @@
   {{form.as_p}}
   <button type= 'submit' >Change Status</button>
 </form>
-
-
-{% if completed_order %}
-<h2> Completed Orders</h2>
-{% for completedOrder in  completed_order %}
-
-<h4>Date: {{completedOrder.created_at|date:"M d, Y H:i"}}</h4>
-<h4>Customer: {{completedOrder.user}}</h4>
-
-{% if completedOrder.payment %}
-<p>Total Price - {{completedOrder.total}} BHD  (Paid Online)</p>
-{% else %}
-<p>Total Price - {{completedOrder.total}} BHD (Paid Cash)</p>
-{% endif %}
 <hr>
 
-
-{% endfor %}
-{% endif %}
 
 
 {% endfor %}
@@ -59,6 +42,8 @@
 <h3>No Current Orders yet </h3>
 <h4>Orders are on the way</h4>
 
+{% endif %}
+
 {% if completed_order %}
 <h2> Completed Orders</h2>
 {% for completedOrder in  completed_order %}
@@ -72,12 +57,8 @@
 <p>Total Price - {{completedOrder.total}} BHD (Paid Cash)</p>
 {% endif %}
 <hr>
-
-
 {% endfor %}
 {% endif %}
-{% endif %}
-
 
 {% else %}
 {% comment %}
@@ -106,14 +87,14 @@
 <p>Total = {{order.bucket.total_price}} BHD </p>
 
 <p>Service : {{order.bucket.get_service_type_display}}
-{% comment %} {% if order.can_delete %} {% endcomment %}
+{% if order.can_delete and order.status != 'C' %}
 
   <form method="post" action="{% url 'order_cancel' order.id %}">
     {% csrf_token %}
     <p>Cancel order within 3 mins</p>
     <button type="submit">Cancel Order</button>
   </form>
-  {% comment %} {% endif %} {% endcomment %}
+  {% endif %}
 
       {% endif %}
 {% endfor %}

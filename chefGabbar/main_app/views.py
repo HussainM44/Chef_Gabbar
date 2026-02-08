@@ -190,7 +190,7 @@ def userUpdate(request, user_id):
 # Menu Views
 
 
-class MenuList(LoginRequiredMixin,ListView):
+class MenuList(ListView):
     model = Menu
 
     def get_context_data(self, **kwargs):
@@ -374,6 +374,13 @@ def serviceType(request, bucket_id):
     return redirect("/menu/list/")
 
 
+def cancelServiceType(request, bucket_id):
+    bucket = Bucket.objects.get(id=bucket_id)
+    bucket.service_type = "P"
+    bucket.save()
+
+    return redirect("/menu/list/")
+
 
 class BucketDelete(LoginRequiredMixin,DeleteView):
     model = Bucket
@@ -391,7 +398,7 @@ def singleItemDelete(request , bucket_id, dish_id):
 # Moment Views
 
 
-class MomentList(LoginRequiredMixin,ListView):
+class MomentList(ListView):
     model = Moment
     ordering = ["-created_at"]
     def get_context_data(self, **kwargs):

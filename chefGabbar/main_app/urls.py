@@ -34,6 +34,7 @@ urlpatterns = [
     path('dish_bucket/add/<int:dish_id>/', views.addDish, name='add_dish'),
     path('dish_bucket/<int:bucket_id>/<int:dish_id>/decrease/', views.decreaseDish, name='decrease_dish'),
     path('bucket/<int:bucket_id>/service_type/', views.serviceType, name='service_type'),
+    path('bucket/<int:bucket_id>/service_type/cancel', views.cancelServiceType, name='cancel_service_type'),
     path('bucket/<int:bucket_id>/add/', views.bucketToOrder, name="bucketToOrder"),
     path('bucket/<int:pk>/delete/', views.BucketDelete.as_view(), name='bucket_delete'),
     path('bucket/<int:bucket_id>/item/<int:dish_id>/delete/', views.singleItemDelete, name='single_item_delete'),

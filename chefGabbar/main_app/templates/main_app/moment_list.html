@@ -1,87 +1,129 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
 {% if user.is_authenticated %}
 <nav>
-  <a href='{% url "moment_create" %}'>Create your Moment</a>
+  <a href="{% url 'moment_create' %}">Create your Moment</a>
 </nav>
-{% endif%}
+{% endif %}
+
 {% for moment in moment_list %}
-{% load static %}
+
+<!-- ================= USER PROFILE ================= -->
 <a href="{% url 'profile' moment.user.id %}">
-<div style="display: flex; align-items: center; gap: 8px;">
+<div style="display: flex; align-items: center; gap: 8px; margin-top: 20px;">
+
     {% if moment.user.profile.image %}
-        <img
-            src="{{ moment.user.profile.image.url }}"
-            alt="{{ moment.user.username }}"
-            style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
+        <img src="{{ moment.user.profile.image.url }}"
+             alt="{{ moment.user.username }}"
+             style="width:24px;height:24px;border-radius:50%;object-fit:cover;">
     {% else %}
-        <div style="width: 24px; height: 24px; border-radius: 50%; background-color: #8b0000; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">
+        <div style="width:24px;height:24px;border-radius:50%;
+                    background:#8b0000;color:white;
+                    display:flex;align-items:center;justify-content:center;
+                    font-size:12px;font-weight:bold;">
             {{ moment.user.username|slice:":1"|upper }}
         </div>
     {% endif %}
-    <h3 style="margin: 0; font-size: 16px;">{{ moment.user.username }}</h3>
-</div>
 
+    <h3 style="margin:0;">{{ moment.user.username }}</h3>
+
+</div>
 </a>
 
-    <p>{{ moment.description }}</p>
+<!-- ================= DESCRIPTION ================= -->
+<p>{{ moment.description }}</p>
 
-    {% if moment.file %}
-        {% load static %}
-        {% if '.mp4' in moment.file.url or '.webm' in moment.file.url or '.ogg' in moment.file.url or '.mov' in moment.file.url or '.avi' in moment.file.url %}
-            <video width="100%" max-width="320px" controls>
-                <source src="{{ moment.file.url }}" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-        {% elif '.jpg' in moment.file.url or '.jpeg' in moment.file.url or '.png' in moment.file.url or '.gif' in moment.file.url %}
-            <img src="{{ moment.file.url }}" alt="Moment image" style="max-width: 640px; width: 100%; height: auto;">
-        {% endif %}
+
+<!-- ================= MEDIA ================= -->
+{% if moment.file %}
+
+    {% if '.mp4' in moment.file.url or '.webm' in moment.file.url or '.mov' in moment.file.url %}
+        <video width="100%" controls>
+            <source src="{{ moment.file.url }}" type="video/mp4">
+        </video>
+
+    {% elif '.jpg' in moment.file.url or '.jpeg' in moment.file.url or '.png' in moment.file.url or '.gif' in moment.file.url %}
+        <img src="{{ moment.file.url }}"
+             style="max-width:640px;width:100%;height:auto;">
     {% endif %}
-        {% for comment in moment.comments.all %}
-        <a href="{% url 'profile' comment.user.id %}">
-<div style="display: flex; align-items: center; gap: 8px;">
+
+{% endif %}
+
+
+<!-- ================= EDIT / DELETE ================= -->
+{% if moment.user == request.user %}
+
+<div style="margin:10px 0;">
+
+    <a href="{% url 'moment_update' moment.pk %}">Edit</a>
+
+    <form method="post"
+          action="{% url 'moment_delete' moment.pk %}"
+          style="display:inline;">
+        {% csrf_token %}
+        <button type="submit">Delete</button>
+    </form>
+
+</div>
+
+{% endif %}
+
+
+<!-- ================= COMMENTS ================= -->
+<h4>Reviews</h4>
+
+{% for comment in moment.comments.all %}
+
+<a href="{% url 'profile' comment.user.id %}">
+<div style="display:flex;align-items:center;gap:8px;margin-top:10px;">
+
     {% if comment.user.profile.image %}
-        <img
-            src="{{ comment.user.profile.image.url }}"
-            alt="{{ comment.user.username }}"
-            style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
+        <img src="{{ comment.user.profile.image.url }}"
+             style="width:22px;height:22px;border-radius:50%;">
     {% else %}
-        <div style="width: 24px; height: 24px; border-radius: 50%; background-color: #8b0000; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">
+        <div style="width:22px;height:22px;border-radius:50%;
+                    background:#8b0000;color:white;
+                    display:flex;align-items:center;justify-content:center;
+                    font-size:11px;">
             {{ comment.user.username|slice:":1"|upper }}
         </div>
     {% endif %}
-    <h3 style="margin: 0; font-size: 16px;">{{ comment.user.username }}</h3>
-</div>
 
+    <strong>{{ comment.user.username }}</strong>
+
+</div>
 </a>
 
-            <p> {{ comment.review }}</p>
-            {% if comment.user == request.user %}
-            <form method="POST" action="{% url 'delete_comment' comment.id %}">
-                {% csrf_token %}
-                <button type='submit'>Delete </button>
-            </form>
-            {% endif %}
-        {% endfor %}
+<p>{{ comment.review }}</p>
 
-        {% if user.is_authenticated %}
-            <form method="post" action="{% url 'create_comment' moment.id %}">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit">Submit</button>
-            </form>
-        {% endif %}
+{% if comment.user == request.user %}
+<form method="post" action="{% url 'delete_comment' comment.id %}">
+    {% csrf_token %}
+    <button type="submit">Delete</button>
+</form>
+{% endif %}
 
-      {% if moment.user == request.user %}
-              <a href='{% url "moment_update" moment.pk %}'>Edit Moment</a>
-      <form method='post' action='{% url 'moment_delete' moment.pk %}'>
-        {% csrf_token %}
-        <button type='submit'>Delete</button>
-      </form>
+{% empty %}
+<p>No reviews yet.</p>
 
-    {% endif %}
+{% endfor %}
 
-    {% endfor %}
+
+<!-- ================= ADD COMMENT ================= -->
+{% if user.is_authenticated %}
+
+<form method="post" action="{% url 'create_comment' moment.id %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+</form>
+
+{% endif %}
+
+<hr>
+
+{% endfor %}
 
 {% endblock %}

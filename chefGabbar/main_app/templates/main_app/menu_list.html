@@ -6,6 +6,18 @@
 <a href="{% url 'menu_create' %}">Create Your Cuisine</a>
 {%endif%}
 <h1>Menu </h1>
+
+
+{% if not user.is_authenticated%}
+<div id = 'login-container' class='a'>
+<h4>Ready to order? Log in or sign up now!</h4>
+<ul>
+<li><a href="{% url 'signup' %}">Sign Up</a></li>
+<li><a href="{% url 'login' %}">Login </a></li>
+</ul>
+</div>
+{% endif %}
+
 {% comment %}
 -------------Search Dishes to Add-----------
  {% endcomment %}
@@ -135,6 +147,7 @@
 
       <p> <strong>Total: {{ bucket.total_price|floatformat:2 }} BHD </strong></p>
 
+
       {% if bucket.service_type == 'P' %}
         <form method="POST" action="{% url 'service_type' bucket.id %}" class="service">
           {% csrf_token %}
@@ -149,6 +162,14 @@
 
       {% else %}
         <p class="service">Service Type: {{ bucket.get_service_type_display }}</p>
+
+         <form method="POST" action="{% url 'cancel_service_type' bucket.id %}">
+      {% csrf_token %}
+      <button type="submit" style="border: none; background: none; cursor: pointer;">
+        ✖️
+      </button>
+    </form>
+
 
         {% if bucket.id not in bucket_added %}
           <form method="POST" action="{% url 'checkout' bucket.id %}">
@@ -168,6 +189,7 @@
         {% else %}
           <p>Added to Cart ✅</p>
         {% endif %}
+
       {% endif %}
     {% endif %}
   {% endfor %}
