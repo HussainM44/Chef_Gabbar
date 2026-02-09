@@ -2,199 +2,218 @@
 
 {% block content%}
 
-{% if user.is_superuser %}
-<a href="{% url 'menu_create' %}">Create Your Cuisine</a>
-{%endif%}
-<h1>Menu </h1>
+<div class="menu-container {% if buckets %}menu-with-bucket{% endif %}">
+  <!-- Admin Create Menu Button -->
+  {% if user.is_superuser %}
+  <div class="admin-actions">
+    <a href="{% url 'menu_create' %}" class="create-btn">Create Your Cuisine</a>
+  </div>
+  {%endif%}
 
+  <h1 class="menu-title">Menu</h1>
 
-{% if not user.is_authenticated%}
-<div id = 'login-container' class='a'>
-<h4>Ready to order? Log in or sign up now!</h4>
-<ul>
-<li><a href="{% url 'signup' %}">Sign Up</a></li>
-<li><a href="{% url 'login' %}">Login </a></li>
-</ul>
-</div>
-{% endif %}
+  <!-- Login Prompt for Unauthenticated Users -->
+  {% if not user.is_authenticated%}
+  <div class="login-prompt">
+    <h4 class="login-prompt-title">Ready to order? Log in or sign up now!</h4>
+    <ul class="login-prompt-links">
+      <li><a href="{% url 'signup' %}" class="login-prompt-link">Sign Up</a></li>
+      <li><a href="{% url 'login' %}" class="login-prompt-link">Login</a></li>
+    </ul>
+  </div>
+  {% endif %}
 
-{% comment %}
--------------Search Dishes to Add-----------
- {% endcomment %}
-<h2>Search Dishes</h2>
-<form method="get" action="{% url 'menu_list' %}">
-    <input type="text" name="q" placeholder="Search for a dish..." value="{{ search_query }}">
-    <button type="submit">Search</button>
-</form>
-{% if search_query %}
-    <h3>Results for "{{ search_query }}":</h3>
+  <!-- Search Section -->
+  <div class="search-section">
+    <h2 class="search-title">Search Dishes</h2>
+    <form method="get" action="{% url 'menu_list' %}" class="search-form">
+      <input type="text" name="q" placeholder="Search for a dish..." value="{{ search_query }}" class="search-input">
+      <button type="submit" class="search-btn">Search</button>
+    </form>
+
+    {% if search_query %}
+    <h3 class="search-results-title">Results for "{{ search_query }}":</h3>
     {% if search_results %}
-            {% for dish in search_results %}
-<p>{{dish.name}} - {{dish.price}} BHD - {{dish.description}} </p>
-{% load static %}
-{% if dish.dish_image %}
-    <img
-        src="{{ dish.dish_image.url }}"
-        width="100"
-        height="100"
-        alt="{{ dish.name }}"
-        style="border-radius: 8px; object-fit: cover;">
-{% else %}
-    <div style="width: 100px; height: 100px; border-radius: 8px; background-color: #ccc; display: flex; align-items: center; justify-content: center; color: #666;">No Image</div>
-{% endif %}
-              {% if  not user.is_superuser%}
-  {% if user.is_authenticated %}
-<form method="POST" action="{% url 'add_dish' dish.id %}" >
-  {% csrf_token %}
-  <button type="submit">➕</button>
-</form>
-{% endif %}
-
-{% endif %}
-            <br>
-            {% endfor %}
-
+    <div class="dishes-grid">
+      {% for dish in search_results %}
+      <div class="dish-card">
+        <div class="dish-image-wrapper">
+          {% load static %}
+          {% if dish.dish_image %}
+          <img src="{{ dish.dish_image.url }}" alt="{{ dish.name }}" class="dish-image">
+          {% else %}
+          <div class="dish-image-placeholder">No Image</div>
+          {% endif %}
+        </div>
+        <div class="dish-info">
+          <h3 class="dish-name">{{dish.name}}</h3>
+          <p class="dish-price">{{dish.price}} BHD</p>
+          <p class="dish-description">{{dish.description}}</p>
+        </div>
+        {% if not user.is_superuser %}
+        {% if user.is_authenticated %}
+        <form method="POST" action="{% url 'add_dish' dish.id %}" class="dish-add-form">
+          {% csrf_token %}
+          <button type="submit" class="dish-add-btn">➕</button>
+        </form>
+        {% endif %}
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
     {% else %}
-        <p>No dishes found.</p>
+    <p class="no-results">No dishes found.</p>
     {% endif %}
-{% endif %}
+    {% endif %}
+  </div>
 
+  <!-- All Menu Items -->
+  <div class="menu-list">
+    {% for menu in menu_list %}
+    <div class="cuisine-section">
+      <h2 class="cuisine-title">{{menu.cuisine}}</h2>
+      <div class="dishes-grid">
+        {% for dish in menu.dish_set.all %}
+        <div class="dish-card">
+          <div class="dish-image-wrapper">
+            {% load static %}
+            {% if dish.dish_image %}
+            <img src="{{ dish.dish_image.url }}" alt="{{ dish.name }}" class="dish-image">
+            {% else %}
+            <div class="dish-image-placeholder">No Image</div>
+            {% endif %}
+          </div>
+          <div class="dish-info">
+            <h3 class="dish-name">{{dish.name}}</h3>
+            <p class="dish-price">{{dish.price}} BHD</p>
+            <p class="dish-description">{{dish.description}}</p>
+          </div>
+          {% if not user.is_superuser %}
+          {% if user.is_authenticated %}
+          <form method="POST" action="{% url 'add_dish' dish.id %}" class="dish-add-form">
+            {% csrf_token %}
+            <button type="submit" class="dish-add-btn">➕</button>
+          </form>
+          {% endif %}
+          {% endif %}
+          {% if user.is_superuser %}
+          <div class="admin-dish-actions">
+            <a href="{% url 'dish_delete' dish.pk %}" class="admin-action-link delete">Delete</a>
+            <a href="{% url 'dish_update' dish.pk %}" class="admin-action-link edit">Update</a>
+          </div>
+          {%endif%}
+        </div>
+        {% endfor %}
+      </div>
 
-{% comment %}
--------------All dishes in Menu------------
-{% endcomment %}
-{% for menu in menu_list %}
-<h2>{{menu.cuisine}}</h2>
-{% for dish in menu.dish_set.all %}
-<p>{{dish.name}} - {{dish.price}} BHD - {{dish.description}} </p>
-{% load static %}
-{% if dish.dish_image %}
-    <img
-        src="{{ dish.dish_image.url }}"
-        width="100"
-        height="100"
-        alt="{{ dish.name }}"
-        style="border-radius: 8px; object-fit: cover;">
-{% else %}
-    <div style="width: 100px; height: 100px; border-radius: 8px; background-color: #ccc; display: flex; align-items: center; justify-content: center; color: #666;">No Image</div>
-{% endif %}
-  {% if  not user.is_superuser%}
-  {% if user.is_authenticated %}
-<form method="POST" action="{% url 'add_dish' dish.id %}" >
-  {% csrf_token %}
-  <button type="submit">➕</button>
-</form>
-{% endif %}
+      {% if user.is_superuser %}
+      <div class="admin-menu-actions">
+        <a href="{% url 'dish_create' menu.pk %}" class="admin-action-btn">Add A Dish</a>
+        <a href="{% url 'menu_delete' menu.pk %}" class="admin-action-btn delete">Delete {{menu.cuisine}}</a>
+      </div>
+      {%endif%}
+    </div>
+    {% endfor %}
+  </div>
 
-{% endif %}
-{% if user.is_superuser %}
-<a href= "{% url 'dish_delete' dish.pk %}">Delete {{dish.name}}</a>
-<a href= "{% url 'dish_update' dish.pk %}">Update {{dish.name}}</a>
-{%endif%}
+  <!-- Bucket (Cart) Sidebar -->
+  {% if buckets %}
+  <div class="bucket-container">
+    <h2 class="bucket-title">Bucket</h2>
 
-{% endfor %}
+    {% for bucket in buckets %}
+    <div class="bucket-content">
+      <h3 class="bucket-items-title">Items:</h3>
 
-{% if user.is_superuser %}
-<a href = "{% url 'dish_create' menu.pk %}">Add A Dish</a>
-<br>
-<a href = "{% url 'menu_delete' menu.pk %}">Delete {{menu.cuisine}}</a>
-</br>
-{%endif%}
-
-
-{% endfor %}
-
-{% comment %}
--------------Bucket to add dishes to order ----------
- {% endcomment %}
-
-{% if buckets %}
-<div id="bucket-container">
-  <h2 class="a">Bucket</h2>
-
-  {% for bucket in buckets %}
-    <h3 class="a">Items:</h3>
-
-    {% if bucket.itemqty_set.all %}
-      {% for item in bucket.itemqty_set.all %}
+      {% if bucket.itemqty_set.all %}
+      <div class="bucket-items">
+        {% for item in bucket.itemqty_set.all %}
         {% if item.dish %}
-          <p>
-            <strong>{{ item.dish.name }} </strong>
-            {{ item.quantity }} × {{ item.dish.price|floatformat:2 }} BHD =
-            {{ item.total|floatformat:2 }} BHD
+        <div class="bucket-item">
+          <p class="bucket-item-info">
+            <strong class="bucket-item-name">{{ item.dish.name }}</strong>
+            <span class="bucket-item-quantity">{{ item.quantity }} × {{ item.dish.price|floatformat:2 }} BHD</span>
+            <span class="bucket-item-total">= {{ item.total|floatformat:2 }} BHD</span>
           </p>
 
           {% if bucket.service_type == "P" %}
-            <form method="POST" action="{% url 'add_dish' item.dish.id %}" style="display:inline;">
+          <div class="bucket-item-controls">
+            <form method="POST" action="{% url 'add_dish' item.dish.id %}" class="bucket-control-form">
               {% csrf_token %}
-              <button type="submit">➕</button>
+              <button type="submit" class="bucket-control-btn">➕</button>
             </form>
 
-            <form method="POST" action="{% url 'decrease_dish' bucket.id item.dish.id %}" style="display:inline;">
+            <form method="POST" action="{% url 'decrease_dish' bucket.id item.dish.id %}" class="bucket-control-form">
               {% csrf_token %}
-              <button type="submit">➖</button>
+              <button type="submit" class="bucket-control-btn">➖</button>
             </form>
 
-            <form method="POST" action="{% url 'single_item_delete' bucket.id item.dish.id %}" style="display:inline;">
+            <form method="POST" action="{% url 'single_item_delete' bucket.id item.dish.id %}" class="bucket-control-form">
               {% csrf_token %}
-              <button type="submit">✖️</button>
+              <button type="submit" class="bucket-control-btn delete">✖️</button>
             </form>
+          </div>
           {% endif %}
-
-          <hr>
+        </div>
         {% endif %}
-      {% endfor %}
+        {% endfor %}
+      </div>
 
-      <p> <strong>Total: {{ bucket.total_price|floatformat:2 }} BHD </strong></p>
-
+      <p class="bucket-total"><strong>Total: {{ bucket.total_price|floatformat:2 }} BHD</strong></p>
 
       {% if bucket.service_type == 'P' %}
-        <form method="POST" action="{% url 'service_type' bucket.id %}" class="service">
+      <div class="bucket-service-form">
+        <form method="POST" action="{% url 'service_type' bucket.id %}" class="service-type-form">
           {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit">Submit</button>
+          <div class="service-form-fields">
+            {{ form.as_p }}
+          </div>
+          <button type="submit" class="service-submit-btn">Submit</button>
         </form>
 
-        <form method="POST" action="{% url 'bucket_delete' bucket.id %}">
+        <form method="POST" action="{% url 'bucket_delete' bucket.id %}" class="bucket-clear-form">
           {% csrf_token %}
-          <button type="submit">Clear Bucket</button>
+          <button type="submit" class="bucket-clear-btn">Clear Bucket</button>
         </form>
+      </div>
 
       {% else %}
-        <p class="service">Service Type: {{ bucket.get_service_type_display }}</p>
-
-         <form method="POST" action="{% url 'cancel_service_type' bucket.id %}">
-      {% csrf_token %}
-      <button type="submit" style="border: none; background: none; cursor: pointer;">
-        ✖️
-      </button>
-    </form>
-
+      <div class="bucket-checkout">
+        <div class="service-type-display-wrapper">
+          <p class="service-type-display">Service Type: {{ bucket.get_service_type_display }}</p>
+          <form method="POST" action="{% url 'cancel_service_type' bucket.id %}" class="cancel-service-form-inline">
+            {% csrf_token %}
+            <button type="submit" class="cancel-service-btn-inline">✖</button>
+          </form>
+        </div>
 
         {% if bucket.id not in bucket_added %}
-          <form method="POST" action="{% url 'checkout' bucket.id %}">
+        <div class="checkout-actions">
+          <form method="POST" action="{% url 'checkout' bucket.id %}" class="checkout-form">
             {% csrf_token %}
-            <button type="submit">Pay Online</button>
+            <button type="submit" class="checkout-btn online">Pay Online</button>
           </form>
 
-          <form method="POST" action="{% url 'bucketToOrder' bucket.id %}">
+          <form method="POST" action="{% url 'bucketToOrder' bucket.id %}" class="checkout-form">
             {% csrf_token %}
-            <button type="submit">Pay Cash</button>
+            <button type="submit" class="checkout-btn cash">Pay Cash</button>
           </form>
 
-          <form method="POST" action="{% url 'bucket_delete' bucket.id %}">
+          <form method="POST" action="{% url 'bucket_delete' bucket.id %}" class="checkout-form">
             {% csrf_token %}
-            <button type="submit">Clear Bucket</button>
+            <button type="submit" class="checkout-btn clear">Clear Bucket</button>
           </form>
+        </div>
         {% else %}
-          <p>Added to Cart ✅</p>
+        <p class="added-to-cart">Added to Cart ✅</p>
         {% endif %}
-
+      </div>
       {% endif %}
-    {% endif %}
-  {% endfor %}
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
 </div>
-{% endif %}
-
 
 {%endblock%}

@@ -10,35 +10,35 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   </head>
   <header>
-    <nav>
+    <nav class="navbar">
+      <div class="navbar-left">
+        <a href="{% url 'home' %}" class="navbar-brand">Chef Gabbar</a>
 
-        <li>
-          {% if user.is_authenticated %}
-<a href="{% url 'home' %}" class="navbar-brand">Chef Gabbar</a>
-        <a href={% url 'profile' user.id %}>Profile</a>
-                <a href="{% url 'menu_list' %}">Menu </a>
-                {% if user.is_superuser %}
-          <a href="{% url 'order_list' %}">Orders </a>
-          {% else %}
-          <a href="{% url 'order_list' %}">Cart </a>
-          {% endif %}
-          <a href="{% url 'moment_list' %}">Moment </a>
-
-          <form method='post' action='{% url 'logout' %}'>
-          {% csrf_token %}
-          <input type='submit' value='Logout'>
-        </form>
-        </li>
+        {% if user.is_authenticated %}
+          <form method='post' action='{% url 'logout' %}' class="navbar-form">
+            {% csrf_token %}
+            <button type='submit' class="nav-btn">Logout</button>
+          </form>
         {% else %}
-        <li>
-        <a href="{% url 'signup' %}">Sign Up</a>
-        <a href="{% url 'login' %}">Login </a>
-        <a href="{% url 'menu_list' %}">Menu </a>
-                  <a href="{% url 'moment_list' %}">Moment </a>
-
-        </li>
+          <a href="{% url 'login' %}" class="nav-link">Login</a>
+          <a href="{% url 'signup' %}" class="nav-link">Sign Up</a>
         {% endif %}
+      </div>
 
+      <div class="navbar-right">
+        {% if user.is_authenticated %}
+          <a href="{% url 'profile' user.id %}" class="nav-link">Profile</a>
+        {% endif %}
+        <a href="{% url 'menu_list' %}" class="nav-link">Menu</a>
+        {% if user.is_authenticated %}
+          {% if user.is_superuser %}
+            <a href="{% url 'order_list' %}" class="nav-link">Orders</a>
+          {% else %}
+            <a href="{% url 'order_list' %}" class="nav-link">Cart</a>
+          {% endif %}
+        {% endif %}
+        <a href="{% url 'moment_list' %}" class="nav-link">Moment</a>
+      </div>
     </nav>
   </header>
   <body>

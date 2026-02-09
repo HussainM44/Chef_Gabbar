@@ -1,130 +1,150 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% comment %}
-------------This view is for Manager / Superuser ----------
-{% endcomment %}
-{% if user.is_superuser %}
-<h1>Orders</h1>
-{% comment %}
--------------Shows All orders from customer -----------
- {% endcomment %}
-{% if order_list %}
-{% for order in order_list %}
 
-<h3>Ordered by {{order.bucket.user.username.capitalize}}</h3>
-<h4>Service : {{order.bucket.get_service_type_display}}</h4>
-    <h4>Cart:</h4>
-    <ul>
-      {% for item in order.bucket.items.all %}
-        <li>{{ item.name }} ({{ item.price }} BHD)</li>
-      {% endfor %}
-    </ul>
-    <p>Total = {{order.bucket.total_price}} BHD </p>
-    {% if order.bucket.paid %}
-<h4>Paid Online</h4>
-{% else %}
-<h4>Payment Later</h4>
-{% endif %}
+<div class="orders-container">
+  {% if user.is_superuser %}
+  <!-- ============ MANAGER / SUPERUSER VIEW ============ -->
+  <h1 class="orders-title">Orders</h1>
 
-<p>Status: {{order.get_status_display}}</p>
-<form method='post' action="{% url 'status_update' order.id %}">
-  {% csrf_token %}
-  {{form.as_p}}
-  <button type= 'submit' >Change Status</button>
-</form>
-<hr>
+  {% if order_list %}
+  <div class="orders-list">
+    {% for order in order_list %}
+    <div class="order-card">
+      <h3 class="order-customer">Ordered by {{order.bucket.user.username.capitalize}}</h3>
+      <h4 class="order-service">Service: {{order.bucket.get_service_type_display}}</h4>
 
+      <h4 class="order-items-title">Cart:</h4>
+      <ul class="order-items-list">
+        {% for item in order.bucket.items.all %}
+        <li class="order-item">{{ item.name }} ({{ item.price }} BHD)</li>
+        {% endfor %}
+      </ul>
 
+      <p class="order-total">Total = {{order.bucket.total_price}} BHD</p>
 
-{% endfor %}
-{% else %}
-<h3>No Current Orders yet </h3>
-<h4>Orders are on the way</h4>
+      {% if order.bucket.paid %}
+      <h4 class="order-payment paid">Paid Online</h4>
+      {% else %}
+      <h4 class="order-payment unpaid">Payment Later</h4>
+      {% endif %}
 
-{% endif %}
+      <p class="order-status">Status: {{order.get_status_display}}</p>
 
-{% if completed_order %}
-<h2> Completed Orders</h2>
-{% for completedOrder in  completed_order %}
-
-<h4>Date: {{completedOrder.created_at|date:"M d, Y H:i"}}</h4>
-<h4>Customer: {{completedOrder.user}}</h4>
-
-{% if completedOrder.payment %}
-<p>Total Price - {{completedOrder.total}} BHD  (Paid Online)</p>
-{% else %}
-<p>Total Price - {{completedOrder.total}} BHD (Paid Cash)</p>
-{% endif %}
-<hr>
-{% endfor %}
-{% endif %}
-
-{% else %}
-{% comment %}
----------------- For Customer View -----------------
- {% endcomment %}
-
-<h1>Cart</h1>
-{% comment %}
--------------Shows logged in user current order-----------
- {% endcomment %}
-{% if order_list %}
-{% for order in order_list %}
-  {% if order.bucket.user == request.user %}
-    <h3>Status : {{order.get_status_display}}</h3>
-    <ul>
-    {% for item in order.bucket.items.all %}
-      <li>{{ item.name }} - {{ item.price }} BHD</li>
+      <form method='post' action="{% url 'status_update' order.id %}" class="status-update-form">
+        {% csrf_token %}
+        <div class="status-form-fields">
+          {{form.as_p}}
+        </div>
+        <button type='submit' class="status-update-btn">Change Status</button>
+      </form>
+    </div>
     {% endfor %}
-    </ul>
-
-{% if order.bucket.paid %}
-<h4>Paid Online</h4>
-{% else %}
-<h4>Payment Later</h4>
-{% endif %}
-<p>Total = {{order.bucket.total_price}} BHD </p>
-
-<p>Service : {{order.bucket.get_service_type_display}}
-{% if order.can_delete and order.status != 'C' %}
-
-  <form method="post" action="{% url 'order_cancel' order.id %}">
-    {% csrf_token %}
-    <p>Cancel order within 3 mins</p>
-    <button type="submit">Cancel Order</button>
-  </form>
+  </div>
+  {% else %}
+  <div class="no-orders">
+    <h3 class="no-orders-title">No Current Orders yet</h3>
+    <h4 class="no-orders-subtitle">Orders are on the way</h4>
+  </div>
   {% endif %}
 
-      {% endif %}
-{% endfor %}
-{% else %}
-<h2>Nothing in the Bucket yet</h2>
-<a href='{% url 'menu_list' %}'>
-  <h3>Checkout the menu</h3>
-</a>
-{% endif %}
-{% if completed_order %}
-  <h2>Completed Orders</h2>
+  {% if completed_order %}
+  <div class="completed-orders-section">
+    <details class="completed-orders-dropdown">
+      <summary class="completed-orders-toggle">
+        <h2 class="completed-orders-title">Completed Orders</h2>
+      </summary>
+      <div class="completed-orders-list">
+        {% for completedOrder in completed_order %}
+        <div class="completed-order-card">
+          <h4 class="completed-order-date">Date: {{completedOrder.created_at|date:"M d, Y H:i"}}</h4>
+          <h4 class="completed-order-customer">Customer: {{completedOrder.user}}</h4>
 
-  {% for completedOrder in completed_order %}
-    {% if completedOrder.user == request.user.username %}
+          {% if completedOrder.payment %}
+          <p class="completed-order-total">Total Price - {{completedOrder.total}} BHD (Paid Online)</p>
+          {% else %}
+          <p class="completed-order-total">Total Price - {{completedOrder.total}} BHD (Paid Cash)</p>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </details>
+  </div>
+  {% endif %}
 
-      <h4>Date: {{ completedOrder.created_at|date:"M d, Y H:i" }}</h4>
-      <h4>Customer: {{ completedOrder.user }}</h4>
+  {% else %}
+  <!-- ============ CUSTOMER VIEW ============ -->
+  <h1 class="cart-title">Cart</h1>
 
-      {% if completedOrder.payment %}
-        <p>Total Price - {{ completedOrder.total }} BHD (Paid Online)</p>
+  {% if order_list %}
+  <div class="cart-list">
+    {% for order in order_list %}
+    {% if order.bucket.user == request.user %}
+    <div class="cart-order-card">
+      <h3 class="cart-order-status">Status: {{order.get_status_display}}</h3>
+
+      <ul class="cart-items-list">
+        {% for item in order.bucket.items.all %}
+        <li class="cart-item">{{ item.name }} - {{ item.price }} BHD</li>
+        {% endfor %}
+      </ul>
+
+      {% if order.bucket.paid %}
+      <h4 class="cart-payment paid">Paid Online</h4>
       {% else %}
-        <p>Total Price - {{ completedOrder.total }} BHD (Paid Cash)</p>
+      <h4 class="cart-payment unpaid">Payment Later</h4>
       {% endif %}
 
-      <hr>
+      <p class="cart-total">Total = {{order.bucket.total_price}} BHD</p>
+      <p class="cart-service">Service: {{order.bucket.get_service_type_display}}</p>
 
+      {% if order.can_delete and order.status != 'C' %}
+      <form method="post" action="{% url 'order_cancel' order.id %}" class="cancel-order-form">
+        {% csrf_token %}
+        <p class="cancel-order-notice">Cancel order within 3 mins</p>
+        <button type="submit" class="cancel-order-btn">Cancel Order</button>
+      </form>
+      {% endif %}
+    </div>
     {% endif %}
-  {% endfor %}
-{% endif %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-cart">
+    <h2 class="empty-cart-title">Nothing in the Bucket yet</h2>
+    <a href='{% url 'menu_list' %}' class="checkout-menu-link">
+      <h3 class="checkout-menu-text">Checkout the menu</h3>
+    </a>
+  </div>
+  {% endif %}
 
+  {% if completed_order %}
+  <div class="customer-completed-orders">
+    <details class="customer-completed-dropdown">
+      <summary class="customer-completed-toggle">
+        <h2 class="customer-completed-title">Completed Orders</h2>
+      </summary>
+      <div class="customer-completed-list">
+        {% for completedOrder in completed_order %}
+        {% if completedOrder.user == request.user.username %}
+        <div class="customer-completed-card">
+          <h4 class="customer-completed-date">Date: {{ completedOrder.created_at|date:"M d, Y H:i" }}</h4>
+          <h4 class="customer-completed-customer">Customer: {{ completedOrder.user }}</h4>
 
-{% endif %}
+          {% if completedOrder.payment %}
+          <p class="customer-completed-total">Total Price - {{ completedOrder.total }} BHD (Paid Online)</p>
+          {% else %}
+          <p class="customer-completed-total">Total Price - {{ completedOrder.total }} BHD (Paid Cash)</p>
+          {% endif %}
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </details>
+  </div>
+  {% endif %}
+
+  {% endif %}
+</div>
+
 {% endblock %}

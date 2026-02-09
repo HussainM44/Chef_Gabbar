@@ -1,15 +1,23 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% if object %}
-<h1>Update Your Moment</h1>
-{% else %}
-<h1>Create Your Moment</h1>
-{% endif %}
 
-<form method='post' action='' enctype="multipart/form-data" >
-  {% csrf_token %}
-  {{form.as_p}}
-  <button type='submit'>Submit </button>
-</form>
+<div class="form-container">
+  <div class="form-card">
+    {% if object %}
+    <h1 class="form-title">Update Your Moment</h1>
+    {% else %}
+    <h1 class="form-title">Create Your Moment</h1>
+    {% endif %}
+
+    <form method='post' action='' enctype="multipart/form-data" class="standard-form">
+      {% csrf_token %}
+      <div class="form-fields">
+        {{form.as_p}}
+      </div>
+      <button type='submit' class="form-submit-btn">Submit</button>
+    </form>
+  </div>
+</div>
+
 {% endblock %}

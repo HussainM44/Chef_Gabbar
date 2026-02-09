@@ -1,15 +1,23 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% if object %}
-<h1>Edit {{object.name}}</h1>
-{% else %}
-<h1> Add Cuisine </h1>
-<form method="POST" action="">
-  {% csrf_token %}
-  {{form.as_p}}
-  <input type="submit" value="Submit">
-</form>
-{% endif%}
+
+<div class="form-container">
+  <div class="form-card">
+    {% if object %}
+    <h1 class="form-title">Edit {{object.name}}</h1>
+    {% else %}
+    <h1 class="form-title">Add Cuisine</h1>
+    {% endif %}
+
+    <form method="POST" action="" class="standard-form">
+      {% csrf_token %}
+      <div class="form-fields">
+        {{form.as_p}}
+      </div>
+      <button type="submit" class="form-submit-btn">Submit</button>
+    </form>
+  </div>
+</div>
 
 {% endblock %}

@@ -5,49 +5,53 @@
 
 {% block content %}
 
-<main>
+<main class="home-container">
 {% load static %}
 
-<img
-  src="{% static 'image/logo.jpeg' %}"
-  alt="Chef Gabbar Logo"
-  class="logo"
-/>
+<div class="home-logo-wrapper">
+  <img
+    src="{% static 'image/logo.jpeg' %}"
+    alt="Chef Gabbar Logo"
+    class="home-logo"
+  />
+</div>
 
-
-
-  <h1>Chef Gabbar</h1>
+  <h1 class="home-title">Chef Gabbar</h1>
 {% if user.is_authenticated %}
-  <h3>Welcome {{user.username.capitalize}} </h3>
+  <h3 class="home-welcome">Welcome {{user.username.capitalize}}</h3>
   {% endif %}
 
-  <p>
-    Welcome to Chef Gabbar, where cooking is an art and every meal is prepared
-    with love, patience, and passion. Our kitchen blends tradition with creativity
-    to bring you flavors that feel familiar yet exciting.
-  </p>
+  <div class="home-intro">
+    <p class="home-text">
+      Welcome to Chef Gabbar, where cooking is an art and every meal is prepared
+      with love, patience, and passion. Our kitchen blends tradition with creativity
+      to bring you flavors that feel familiar yet exciting.
+    </p>
 
-  <p>
-    We believe food should comfort the soul, excite the senses, and create memories
-    worth sharing. From carefully selected ingredients to thoughtfully crafted dishes,
-    quality is at the heart of everything we serve.
-  </p>
+    <p class="home-text">
+      We believe food should comfort the soul, excite the senses, and create memories
+      worth sharing. From carefully selected ingredients to thoughtfully crafted dishes,
+      quality is at the heart of everything we serve.
+    </p>
+  </div>
 
-  <h2>What Makes Us Special</h2>
+  <h2 class="home-section-title">What Makes Us Special</h2>
 
+  <div class="home-features">
+    <p class="home-feature">Fresh, high-quality ingredients used daily</p>
+    <p class="home-feature">Authentic recipes inspired by real kitchens</p>
+    <p class="home-feature">Food prepared with care, not shortcuts</p>
+    <p class="home-feature">A warm and welcoming dining experience</p>
+  </div>
 
-    <p>Fresh, high-quality ingredients used daily</p>
-    <p>Authentic recipes inspired by real kitchens</p>
-    <p>Food prepared with care, not shortcuts</p>
-    <p>A warm and welcoming dining experience</p>
+  <h2 class="home-section-title">Words from kitchen</h2>
 
-
-  <h2>Words from kitchen</h2>
-
-  <p>“Cooking is love made visible.”</p>
-  <p>“A recipe has no soul; the cook gives it life.”</p>
-  <p>“Good food is the foundation of genuine happiness.”</p>
-  <p>“People who love to eat are always the best people.”p>
+  <div class="home-quotes">
+    <p class="home-quote">"Cooking is love made visible."</p>
+    <p class="home-quote">"A recipe has no soul; the cook gives it life."</p>
+    <p class="home-quote">"Good food is the foundation of genuine happiness."</p>
+    <p class="home-quote">"People who love to eat are always the best people."</p>
+  </div>
 
 </main>
 

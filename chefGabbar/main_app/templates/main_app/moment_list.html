@@ -2,128 +2,114 @@
 
 {% block content %}
 
-{% if user.is_authenticated %}
-<nav>
-  <a href="{% url 'moment_create' %}">Create your Moment</a>
-</nav>
-{% endif %}
+<div class="moments-container">
+  {% if user.is_authenticated %}
+  <div class="create-moment-btn-wrapper">
+    <a href="{% url 'moment_create' %}" class="create-moment-btn">+ Create Moment</a>
+  </div>
+  {% endif %}
 
-{% for moment in moment_list %}
+  <div class="moments-feed">
+    {% for moment in moment_list %}
 
-<!-- ================= USER PROFILE ================= -->
-<a href="{% url 'profile' moment.user.id %}">
-<div style="display: flex; align-items: center; gap: 8px; margin-top: 20px;">
+    <div class="moment-card">
+      <!-- ================= USER INFO AT TOP ================= -->
+      <div class="moment-user-top">
+        <a href="{% url 'profile' moment.user.id %}" class="moment-user-link">
+          <div class="moment-user">
+            {% if moment.user.profile.image %}
+              <img src="{{ moment.user.profile.image.url }}" alt="{{ moment.user.username }}" class="moment-user-avatar">
+            {% else %}
+              <div class="moment-user-avatar-placeholder">
+                {{ moment.user.username|slice:":1"|upper }}
+              </div>
+            {% endif %}
+            <h3 class="moment-username">{{ moment.user.username }}</h3>
+          </div>
+        </a>
+      </div>
 
-    {% if moment.user.profile.image %}
-        <img src="{{ moment.user.profile.image.url }}"
-             alt="{{ moment.user.username }}"
-             style="width:24px;height:24px;border-radius:50%;object-fit:cover;">
-    {% else %}
-        <div style="width:24px;height:24px;border-radius:50%;
-                    background:#8b0000;color:white;
-                    display:flex;align-items:center;justify-content:center;
-                    font-size:12px;font-weight:bold;">
-            {{ moment.user.username|slice:":1"|upper }}
-        </div>
-    {% endif %}
+      <!-- ================= MEDIA ================= -->
+      <div class="moment-media">
+        {% if moment.file %}
+          {% if '.mp4' in moment.file.url or '.webm' in moment.file.url or '.mov' in moment.file.url %}
+            <video class="moment-video" controls loop>
+              <source src="{{ moment.file.url }}" type="video/mp4">
+            </video>
+          {% elif '.jpg' in moment.file.url or '.jpeg' in moment.file.url or '.png' in moment.file.url or '.gif' in moment.file.url %}
+            <img src="{{ moment.file.url }}" class="moment-image" alt="Moment">
+          {% endif %}
+        {% endif %}
+      </div>
 
-    <h3 style="margin:0;">{{ moment.user.username }}</h3>
+      <!-- ================= DESCRIPTION ================= -->
+      <div class="moment-description-wrapper">
+        <p class="moment-description">{{ moment.description }}</p>
+      </div>
 
+      <!-- ================= EDIT / DELETE ACTIONS ================= -->
+      {% if moment.user == request.user %}
+      <div class="moment-actions-owner">
+        <a href="{% url 'moment_update' moment.pk %}" class="moment-action-btn">Edit</a>
+        <form method="post" action="{% url 'moment_delete' moment.pk %}" class="moment-delete-form">
+          {% csrf_token %}
+          <button type="submit" class="moment-action-btn moment-delete-btn">Delete</button>
+        </form>
+      </div>
+      {% endif %}
+
+      <!-- ================= COMMENTS SECTION ================= -->
+      <div class="moment-comments-section">
+        <!-- Reviews Dropdown -->
+        <details class="reviews-dropdown">
+          <summary class="reviews-toggle">
+            <h4 class="comments-title">Reviews</h4>
+          </summary>
+          <div class="comments-list">
+            {% for comment in moment.comments.all %}
+            <div class="comment-item">
+              <a href="{% url 'profile' comment.user.id %}" class="comment-user-link">
+                <div class="comment-user">
+                  {% if comment.user.profile.image %}
+                    <img src="{{ comment.user.profile.image.url }}" class="comment-avatar" alt="{{ comment.user.username }}">
+                  {% else %}
+                    <div class="comment-avatar-placeholder">
+                      {{ comment.user.username|slice:":1"|upper }}
+                    </div>
+                  {% endif %}
+                  <strong class="comment-username">{{ comment.user.username }}</strong>
+                </div>
+              </a>
+              <p class="comment-text">{{ comment.review }}</p>
+
+              {% if comment.user == request.user %}
+              <form method="post" action="{% url 'delete_comment' comment.id %}" class="comment-delete-form">
+                {% csrf_token %}
+                <button type="submit" class="comment-delete-btn">Delete</button>
+              </form>
+              {% endif %}
+            </div>
+            {% empty %}
+            <p class="no-comments">No reviews yet.</p>
+            {% endfor %}
+          </div>
+        </details>
+
+        <!-- ================= ADD COMMENT (Always Visible) ================= -->
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'create_comment' moment.id %}" class="comment-form">
+          {% csrf_token %}
+          <div class="comment-form-fields">
+            {{ form.as_p }}
+          </div>
+          <button type="submit" class="comment-submit-btn">Submit</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+
+    {% endfor %}
+  </div>
 </div>
-</a>
-
-<!-- ================= DESCRIPTION ================= -->
-<p>{{ moment.description }}</p>
-
-
-<!-- ================= MEDIA ================= -->
-{% if moment.file %}
-
-    {% if '.mp4' in moment.file.url or '.webm' in moment.file.url or '.mov' in moment.file.url %}
-        <video width="100%" controls>
-            <source src="{{ moment.file.url }}" type="video/mp4">
-        </video>
-
-    {% elif '.jpg' in moment.file.url or '.jpeg' in moment.file.url or '.png' in moment.file.url or '.gif' in moment.file.url %}
-        <img src="{{ moment.file.url }}"
-             style="max-width:640px;width:100%;height:auto;">
-    {% endif %}
-
-{% endif %}
-
-
-<!-- ================= EDIT / DELETE ================= -->
-{% if moment.user == request.user %}
-
-<div style="margin:10px 0;">
-
-    <a href="{% url 'moment_update' moment.pk %}">Edit</a>
-
-    <form method="post"
-          action="{% url 'moment_delete' moment.pk %}"
-          style="display:inline;">
-        {% csrf_token %}
-        <button type="submit">Delete</button>
-    </form>
-
-</div>
-
-{% endif %}
-
-
-<!-- ================= COMMENTS ================= -->
-<h4>Reviews</h4>
-
-{% for comment in moment.comments.all %}
-
-<a href="{% url 'profile' comment.user.id %}">
-<div style="display:flex;align-items:center;gap:8px;margin-top:10px;">
-
-    {% if comment.user.profile.image %}
-        <img src="{{ comment.user.profile.image.url }}"
-             style="width:22px;height:22px;border-radius:50%;">
-    {% else %}
-        <div style="width:22px;height:22px;border-radius:50%;
-                    background:#8b0000;color:white;
-                    display:flex;align-items:center;justify-content:center;
-                    font-size:11px;">
-            {{ comment.user.username|slice:":1"|upper }}
-        </div>
-    {% endif %}
-
-    <strong>{{ comment.user.username }}</strong>
-
-</div>
-</a>
-
-<p>{{ comment.review }}</p>
-
-{% if comment.user == request.user %}
-<form method="post" action="{% url 'delete_comment' comment.id %}">
-    {% csrf_token %}
-    <button type="submit">Delete</button>
-</form>
-{% endif %}
-
-{% empty %}
-<p>No reviews yet.</p>
-
-{% endfor %}
-
-
-<!-- ================= ADD COMMENT ================= -->
-{% if user.is_authenticated %}
-
-<form method="post" action="{% url 'create_comment' moment.id %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit</button>
-</form>
-
-{% endif %}
-
-<hr>
-
-{% endfor %}
 
 {% endblock %}

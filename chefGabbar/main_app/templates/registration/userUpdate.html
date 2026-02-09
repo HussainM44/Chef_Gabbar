@@ -2,19 +2,24 @@
 
 {% block content %}
 
-<h2>Edit {{user.username}} Profile</h2>
-{% if user.profile.count %}
-<form method='POST' action="{% url 'add_profile' user.id %}" enctype="multipart/form-data">
-{% else %}
-<form method='POST' action="{% url 'user_update' user.id %}" enctype="multipart/form-data">
-  {% endif %}
-  {% csrf_token %}
-  {{user_form.as_p}}
-  {{password_form.as_p}}
-  {{profile_form.as_p}}
-  <input type='submit' value='Update'>
-</form>
+<div class="form-container">
+  <div class="form-card">
+    <h1 class="form-title">Edit {{user.username}} Profile</h1>
 
-
+    {% if user.profile.count %}
+    <form method='POST' action="{% url 'add_profile' user.id %}" enctype="multipart/form-data" class="standard-form">
+    {% else %}
+    <form method='POST' action="{% url 'user_update' user.id %}" enctype="multipart/form-data" class="standard-form">
+    {% endif %}
+      {% csrf_token %}
+      <div class="form-fields">
+        {{user_form.as_p}}
+        {{password_form.as_p}}
+        {{profile_form.as_p}}
+      </div>
+      <button type='submit' class="form-submit-btn">Update</button>
+    </form>
+  </div>
+</div>
 
 {% endblock %}
