@@ -15,11 +15,21 @@
       <h4 class="order-service">Service: {{order.bucket.get_service_type_display}}</h4>
 
       <h4 class="order-items-title">Cart:</h4>
-      <ul class="order-items-list">
-        {% for item in order.bucket.items.all %}
-        <li class="order-item">{{ item.name }} ({{ item.price }} BHD)</li>
-        {% endfor %}
-      </ul>
+<ul class="order-items-list">
+  {% for item in order.bucket.itemqty_set.all %}
+    {% if item.dish %}
+      <li class="order-item">
+        <strong>{{ item.dish.name }}</strong>
+        <span>
+          {{ item.quantity }} × {{ item.dish.price|floatformat:3 }} BHD
+        </span>
+        <span>
+          = {{ item.total|floatformat:3 }} BHD
+        </span>
+      </li>
+    {% endif %}
+  {% endfor %}
+</ul>
 
       <p class="order-total">Total = {{order.bucket.total_price}} BHD</p>
 

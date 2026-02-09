@@ -269,11 +269,11 @@ class DishUpdate(LoginRequiredMixin,UpdateView):
 
 class OrderList(LoginRequiredMixin,ListView):
     model = Order
-    ordering = ["-created_at"]
+    ordering = not["-created_at"]
 
     # to send the data of other model to the the cbv
     def get_context_data(self, **kwargs):
-        completed_order = CompletedOrder.objects.all()
+        completed_order = CompletedOrder.objects.order_by("-created_at")
         context = super().get_context_data(**kwargs)
         context["form"] = orderStatusChange()
         context["completed_order"] = completed_order

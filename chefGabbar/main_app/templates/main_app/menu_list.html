@@ -3,12 +3,7 @@
 {% block content%}
 
 <div class="menu-container {% if buckets %}menu-with-bucket{% endif %}">
-  <!-- Admin Create Menu Button -->
-  {% if user.is_superuser %}
-  <div class="admin-actions">
-    <a href="{% url 'menu_create' %}" class="create-btn">Create Your Cuisine</a>
-  </div>
-  {%endif%}
+
 
   <h1 class="menu-title">Menu</h1>
 
@@ -66,7 +61,12 @@
     {% endif %}
     {% endif %}
   </div>
-
+   <!-- Admin Create Menu Button -->
+  {% if user.is_superuser %}
+  <div class="admin-actions">
+    <a href="{% url 'menu_create' %}" class="create-btn">Create Your Cuisine</a>
+  </div>
+  {%endif%}
   <!-- All Menu Items -->
   <div class="menu-list">
     {% for menu in menu_list %}

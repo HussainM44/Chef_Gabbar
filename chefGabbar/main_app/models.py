@@ -14,7 +14,7 @@ STATUS = (
     ("P","In-Progress"),
     ('C','Cooking'),
     ('R', "Ready To Go"),
-    ('D','Delivered'),
+    ('O','On-Route'),
     ('F','Finished'),
 )
 
@@ -39,7 +39,7 @@ class Dish(models.Model):
     menu = models.ForeignKey(Menu , on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     description = models.TextField(max_length=100)
-    price = models.DecimalField(max_digits=5, decimal_places=2)
+    price = models.DecimalField(max_digits=7, decimal_places=3)
     dish_image = models.ImageField(upload_to="uploads/dishes", default="", blank=True)
 
     def __str__(self):
@@ -88,7 +88,7 @@ class Order(models.Model):
 class CompletedOrder(models.Model):
     user = models.CharField(max_length=50)
     payment = models.BooleanField(default=False)
-    total = models.DecimalField(max_digits=5, decimal_places=2)
+    total = models.DecimalField(max_digits=7, decimal_places=3)
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
