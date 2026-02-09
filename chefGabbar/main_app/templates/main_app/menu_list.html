@@ -181,10 +181,12 @@
       <div class="bucket-checkout">
         <div class="service-type-display-wrapper">
           <p class="service-type-display">Service Type: {{ bucket.get_service_type_display }}</p>
+          {% if bucket.id not in bucket_added %}
           <form method="POST" action="{% url 'cancel_service_type' bucket.id %}" class="cancel-service-form-inline">
             {% csrf_token %}
             <button type="submit" class="cancel-service-btn-inline">✖</button>
           </form>
+          {% endif %}
         </div>
 
         {% if bucket.id not in bucket_added %}
