@@ -253,9 +253,9 @@ class DishCreate(LoginRequiredMixin,CreateView):
         return super().form_valid(form)
 
 
-class DishDelete(LoginRequiredMixin,DeleteView):
-    model = Dish
-    success_url = "/menu/list/"
+# class DishDelete(LoginRequiredMixin,DeleteView):
+#     model = Dish
+#     success_url = "/menu/list/"
 
 
 class DishUpdate(LoginRequiredMixin,UpdateView):
