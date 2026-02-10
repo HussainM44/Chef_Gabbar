@@ -196,7 +196,7 @@ class MenuList(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Get the search query
+        # Get the search
         query = self.request.GET.get("q", "")
         if query:
             dishes = Dish.objects.filter(name__icontains=query)

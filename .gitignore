@@ -2,3 +2,4 @@
 __pycache__/
 migrations/
 chefGabbar/main_app/static/uploads
+chefGabbar/media

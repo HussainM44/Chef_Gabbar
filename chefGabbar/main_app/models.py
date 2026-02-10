@@ -65,6 +65,7 @@ class ItemQty(models.Model):
     bucket = models.ForeignKey(Bucket, on_delete=models.CASCADE)
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+    created_at = models.DateTimeField(default=timezone.now)
 
     def total(self):
         return self.dish.price * self.quantity
