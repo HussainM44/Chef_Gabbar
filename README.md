@@ -1,6 +1,6 @@
 # 🍽️ Chef Gabbar: Where Every Bite Tells a Story!
 
-![Chef Gabbar Logo](chefGabbar/media/uploads/SS/logo.png)
+![Chef Gabbar Logo](./chefGabbar/media/uploads/SS/logo.jpeg)
 
 Welcome to **Chef Gabbar**! 👨‍🍳✨ This isn't just another food app; it's a digital culinary experience. Whether you're craving a midnight feast, a quick takeaway, or a cozy dine-in experience, we've got you covered.
 
@@ -22,24 +22,24 @@ Want to see the "secret recipe" behind our app? Check out our blueprints below!
 ### 1. The Welcome Mat 🏠
 Our landing page is designed to make you hungry the second you arrive! It’s sleek, dark, and delicious.
 
-![Chef Gabbar Home](chefGabbar/media/uploads/SS/Screenshot%202026-02-09%20190611.png)
+![Chef Gabbar Home](./chefGabbar/media/uploads/SS/home.png)
 
 ### 2. Find Your Flavor 🔍🥗
 Our menu is organized by cuisine so you can find exactly what you’re craving. Use the **Magic Search Bar** to hunt down your favorites in seconds!
 
-![Menu Search](chefGabbar/media/uploads/SS/Screenshot%202026-02-11%20131042.jpg)
+![Menu Search](./chefGabbar/media/uploads/SS/menu.png)
 
 ### 3. The Control Tower (Management) 🕹️📋
 Behind the scenes, our managers are wizards! This dashboard tracks every order from the moment it's placed until it hits your table.
 * **Live Tracking:** See who’s ordering (shoutout to Zee and Dd! 👋).
 * **Order Status:** From "Cooking" to "Ready to Go!"
 
-![Order Dashboard](chefGabbar/media/uploads/SS/Screenshot%202026-02-09%20191559.png)
+![Order Dashboard](./chefGabbar/media/uploads/SS/order.png)
 
 ### 4. Share the Vibe with "Moments" 🎥✨
 Food is social! Our "Moments" feature lets you upload **Reels and Videos** of your meal. Watch others enjoy their feast and leave a review to spread the love.
 
-![Moments Feature](chefGabbar/media/uploads/SS/Screenshot%202026-02-09%20194005.png)
+![Moments Feature](./chefGabbar/media/uploads/SS/moments.png)
 
 ---
 
