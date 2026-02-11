@@ -1,5 +1,5 @@
 # 🍽️ Chef Gabbar
-**Chef Gabbar** is a modern restaurant food-ordering application that lets customers explore a variety of cuisines and place orders through **Dine-in, Takeaway, or Delivery**.  
+**Chef Gabbar** is a modern restaurant food-ordering application that lets customers explore a variety of cuisines and place orders through **Dine-in, Takeaway, or Delivery**.
 The app allows managers to efficiently manage menus and orders, while customers can share their food experiences through **photos and videos** using the Moments feature.
 
 ---
@@ -24,10 +24,10 @@ You can view wireframe here:  [Wiireframe](https://www.figma.com/design/Lb2w5Uze
 ---
 
 ## Technologies 🛠️
-- **Backend:** Django 6.x  
-- **Database:** SQLite / PostgreSQL  
-- **Frontend:** HTML, CSS, Django Templates  
-- **Media Handling:** ImageField / FileField  
+- **Backend:** Django 6.x
+- **Database:** SQLite / PostgreSQL
+- **Frontend:** HTML, CSS, Django Templates
+- **Media Handling:** ImageField / FileField
 - **Python Version:** 3.10+
 
 ---
