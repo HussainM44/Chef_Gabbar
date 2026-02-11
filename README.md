@@ -1,8 +1,6 @@
 # 🍽️ Chef Gabbar: Where Every Bite Tells a Story!
 
-<p align="center">
-  <img src="chefGabbar/upload/logo.png" alt="Chef Gabbar Logo" width="200">
-</p>
+![Chef Gabbar Logo](chef_gabbar/upload/logo.png)
 
 Welcome to **Chef Gabbar**! 👨‍🍳✨ This isn't just another food app; it's a digital culinary experience. Whether you're craving a midnight feast, a quick takeaway, or a cozy dine-in experience, we've got you covered. 
 
@@ -19,29 +17,29 @@ Want to see the "secret recipe" behind our app? Check out our blueprints below!
 
 ---
 
-## 📸 A Taste of the App (Screenshots)
+## 📸 A Taste of the App
 
 ### 1. The Welcome Mat 🏠
 Our landing page is designed to make you hungry the second you arrive! It’s sleek, dark, and delicious.
-<br>
-<img src="chefGabbar/upload/Screenshot 2026-02-09 190611.png" alt="Chef Gabbar Home" width="800" style="border-radius: 10px;">
+
+![Chef Gabbar Home](chef_gabbar/upload/Screenshot%202026-02-09%20190611.png)
 
 ### 2. Find Your Flavor 🔍🥗
 Our menu is organized by cuisine so you can find exactly what you’re craving. Use the **Magic Search Bar** to hunt down your favorites in seconds!
-<br>
-<img src="chefGabbar/upload/Screenshot 2026-02-11 131042.jpg" alt="Menu Search" width="800" style="border-radius: 10px;">
+
+![Menu Search](chef_gabbar/upload/Screenshot%202026-02-11%20131042.jpg)
 
 ### 3. The Control Tower (Management) 🕹️📋
 Behind the scenes, our managers are wizards! This dashboard tracks every order from the moment it's placed until it hits your table.
 * **Live Tracking:** See who’s ordering (shoutout to Zee and Dd! 👋).
 * **Order Status:** From "Cooking" to "Ready to Go!"
-<br>
-<img src="chefGabbar/upload/Screenshot 2026-02-09 191559.png" alt="Order Dashboard" width="800" style="border-radius: 10px;">
+
+![Order Dashboard](chef_gabbar/upload/Screenshot%202026-02-09%20191559.png)
 
 ### 4. Share the Vibe with "Moments" 🎥✨
 Food is social! Our "Moments" feature lets you upload **Reels and Videos** of your meal. Watch others enjoy their feast and leave a review to spread the love. 
-<br>
-<img src="chefGabbar/upload/Screenshot 2026-02-09 194005.png" alt="Moments Feature" width="800" style="border-radius: 10px;">
+
+![Moments Feature](chef_gabbar/upload/Screenshot%202026-02-09%20194005.png)
 
 ---
 
