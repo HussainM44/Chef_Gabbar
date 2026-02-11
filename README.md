@@ -1,7 +1,5 @@
 # 🍽️ Chef Gabbar: Where Every Bite Tells a Story!
 
-![Chef Gabbar Logo](./chefGabbar/media/uploads/SS/logo.jpeg)
-
 Welcome to **Chef Gabbar**! 👨‍🍳✨ This isn't just another food app; it's your digital culinary sidekick! Whether you're craving a midnight feast 🌙, a quick grab-and-go 🏃‍♂️, or a cozy sit-down vibe 🍷, we’ve got the flavors to make your heart (and stomach) happy.
 
 Our mission? To blend the **soul** of traditional cooking with the **speed** of modern tech. From smoky Mandi to the crunchiest Falafel, we’re bringing the kitchen straight to your fingertips! 📱🥘
