@@ -1,5 +1,9 @@
 # 🍽️ Chef Gabbar: Where Every Bite Tells a Story!
 
+<p align="center">
+  <img src="chefGabbar/upload/logo.png" alt="Chef Gabbar Logo" width="200">
+</p>
+
 Welcome to **Chef Gabbar**! 👨‍🍳✨ This isn't just another food app; it's a digital culinary experience. Whether you're craving a midnight feast, a quick takeaway, or a cozy dine-in experience, we've got you covered. 
 
 Our mission? To blend the soul of traditional cooking with the speed of modern tech. From mouth-watering Mandi to crispy Falafel, we bring the kitchen to your fingertips! 📱🥘
@@ -20,24 +24,24 @@ Want to see the "secret recipe" behind our app? Check out our blueprints below!
 ### 1. The Welcome Mat 🏠
 Our landing page is designed to make you hungry the second you arrive! It’s sleek, dark, and delicious.
 <br>
-<img src="Screenshot 2026-02-09 190611.png" alt="Chef Gabbar Home" width="800" style="border-radius: 10px;">
+<img src="chefGabbar/upload/Screenshot 2026-02-09 190611.png" alt="Chef Gabbar Home" width="800" style="border-radius: 10px;">
 
 ### 2. Find Your Flavor 🔍🥗
 Our menu is organized by cuisine so you can find exactly what you’re craving. Use the **Magic Search Bar** to hunt down your favorites in seconds!
 <br>
-<img src="Screenshot 2026-02-11 131042.jpg" alt="Menu Search" width="800" style="border-radius: 10px;">
+<img src="chefGabbar/upload/Screenshot 2026-02-11 131042.jpg" alt="Menu Search" width="800" style="border-radius: 10px;">
 
 ### 3. The Control Tower (Management) 🕹️📋
 Behind the scenes, our managers are wizards! This dashboard tracks every order from the moment it's placed until it hits your table.
 * **Live Tracking:** See who’s ordering (shoutout to Zee and Dd! 👋).
 * **Order Status:** From "Cooking" to "Ready to Go!"
 <br>
-<img src="Screenshot 2026-02-09 191559.png" alt="Order Dashboard" width="800" style="border-radius: 10px;">
+<img src="chefGabbar/upload/Screenshot 2026-02-09 191559.png" alt="Order Dashboard" width="800" style="border-radius: 10px;">
 
 ### 4. Share the Vibe with "Moments" 🎥✨
 Food is social! Our "Moments" feature lets you upload **Reels and Videos** of your meal. Watch others enjoy their feast and leave a review to spread the love. 
 <br>
-<img src="Screenshot 2026-02-09 194005.png" alt="Moments Feature" width="800" style="border-radius: 10px;">
+<img src="chefGabbar/upload/Screenshot 2026-02-09 194005.png" alt="Moments Feature" width="800" style="border-radius: 10px;">
 
 ---
 
