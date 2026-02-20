@@ -467,30 +467,3 @@ class CommentDelete(LoginRequiredMixin,DeleteView):
     model= Comment
     success_url = "/moments/list/"
 
-
-def create_first_superuser(request):
-
-    # Block if superuser already exists
-    if User.objects.filter(is_superuser=True).exists():
-        messages.error(request, "Superuser already exists.")
-        return redirect("/admin/login/")
-
-    if request.method == "POST":
-        username = request.POST.get("username")
-        email = request.POST.get("email")
-        password = request.POST.get("password")
-
-        if not username or not password:
-            messages.error(request, "All fields are required.")
-            return render(request, "create_superuser.html")
-
-        User.objects.create_superuser(
-            username=username,
-            email=email,
-            password=password
-        )
-
-        messages.success(request, "Superuser created successfully!")
-        return redirect("/admin/login/")
-
-    return render(request, "create_superuser.html")
