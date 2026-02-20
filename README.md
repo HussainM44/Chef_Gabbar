@@ -4,6 +4,8 @@ Welcome to **Chef Gabbar**! 👨‍🍳✨ This isn't just another food app; it'
 
 Our mission? To blend the **soul** of traditional cooking with the **speed** of modern tech. From smoky Mandi to the crunchiest Falafel, we’re bringing the kitchen straight to your fingertips! 📱🥘
 
+Deployed at [Chef Gabbar](https://chefgabbar-vjdy.onrender.com)
+
 ---
 
 ## 🚀 Getting Started
