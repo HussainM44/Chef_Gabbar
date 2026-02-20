@@ -19,6 +19,10 @@
   <h1 class="home-title">Chef Gabbar</h1>
 {% if user.is_authenticated %}
   <h3 class="home-welcome">Welcome {{user.username.capitalize}}</h3>
+    {% if user.is_superuser %}
+  <p class="home-text" >Manager</p>
+  {% endif %}
+
   {% endif %}
 
   <div class="home-intro">

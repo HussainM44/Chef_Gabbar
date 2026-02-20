@@ -51,10 +51,11 @@ class CreateCheckoutSessionView(LoginRequiredMixin, View):
 
         bucket = Bucket.objects.get(id=bucket_id)
 
-        domain = "http://127.0.0.1:8000/"
+        # Get the domain dynamically from the request
+        domain = request.build_absolute_uri('/').rstrip('/')
 
-        success_url = f"{domain}success/?bucket_id={bucket.id}"
-        cancel_url = f"{domain}cancel/"
+        success_url = f"{domain}/success/?bucket_id={bucket.id}"
+        cancel_url = f"{domain}/cancel/"
         # for checkout session from stripe api
         checkout_session = stripe.checkout.Session.create(
             line_items=[
