@@ -10,6 +10,7 @@ from django.http import JsonResponse
 
 # to log in new user and create a auth session
 from django.contrib.auth import login
+from django.contrib import messages
 
 # to update the auth session of the same user
 from django.contrib.auth import update_session_auth_hash
@@ -101,28 +102,45 @@ def home(request):
 # creating the profile and sign up in same def
 
 
+from django.contrib.auth import login
+from django.contrib.auth.models import User
+
+
 def signup(request):
     if request.method == "POST":
         user_form = UserCreationForm(request.POST)
-        # importing form from forms.py & req.FILES for image uploading
         profile_form = profileForm(request.POST, request.FILES)
-        # checking the form is valid or not
+
         if user_form.is_valid() and profile_form.is_valid():
-            user = user_form.save()
-            # saving profile with user and profile model
+
+            # Create user (don't save yet)
+            user = user_form.save(commit=False)
+
+            # ✅ First user = superuser
+            if not User.objects.exists():
+                user.is_staff = True
+                user.is_superuser = True
+
+            user.save()
+
+            # Create profile
             profile = profile_form.save(commit=False)
             profile.user = user
             profile.save()
-            # logging in the same user that signed up
+
+            # Login after signup
             login(request, user)
+
             return redirect("/")
+
         else:
-            error_message = "Invalid sign up - try again"
+            error_message = "Invalid signup details"
+
     else:
         user_form = UserCreationForm()
         profile_form = profileForm()
         error_message = None
-        # sending forms and error messages to the template
+
     return render(
         request,
         "registration/signup.html",
@@ -132,7 +150,6 @@ def signup(request):
             "error_message": error_message,
         },
     )
-
 
 # User Profile views
 
@@ -449,3 +466,31 @@ def createComment(request, moment_id ):
 class CommentDelete(LoginRequiredMixin,DeleteView):
     model= Comment
     success_url = "/moments/list/"
+
+
+def create_first_superuser(request):
+
+    # Block if superuser already exists
+    if User.objects.filter(is_superuser=True).exists():
+        messages.error(request, "Superuser already exists.")
+        return redirect("/admin/login/")
+
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        if not username or not password:
+            messages.error(request, "All fields are required.")
+            return render(request, "create_superuser.html")
+
+        User.objects.create_superuser(
+            username=username,
+            email=email,
+            password=password
+        )
+
+        messages.success(request, "Superuser created successfully!")
+        return redirect("/admin/login/")
+
+    return render(request, "create_superuser.html")

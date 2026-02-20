@@ -4,18 +4,34 @@
 
 <div class="auth-container">
   <div class="auth-card">
+
     <h1 class="auth-title">Create an Account</h1>
-    <form method='POST' action="{% url 'signup' %}" enctype="multipart/form-data" class="auth-form">
+
+    {% if error_message %}
+      <p style="color:red;">{{ error_message }}</p>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" class="auth-form">
       {% csrf_token %}
+
       <div class="auth-form-fields">
-        {{user_form.as_p}}
-        {{profile_form.as_p}}
+        {{ user_form.as_p }}
+        {{ profile_form.as_p }}
       </div>
-      <button type='submit' class="auth-submit-btn">Sign Up</button>
+
+      <button type="submit" class="auth-submit-btn">
+        Sign Up
+      </button>
+
     </form>
+
     <div class="auth-links">
-      <p class="auth-link-text">Already have an account? <a href="{% url 'login' %}" class="auth-link">Login</a></p>
+      <p class="auth-link-text">
+        Already have an account?
+        <a href="{% url 'login' %}" class="auth-link">Login</a>
+      </p>
     </div>
+
   </div>
 </div>
 

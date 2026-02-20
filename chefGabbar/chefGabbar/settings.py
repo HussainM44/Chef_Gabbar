@@ -57,16 +57,23 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'chefGabbar.urls'
 
+import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
+        # ✅ Add your project-level templates folder
+        'DIRS': [BASE_DIR / 'templates'],
+        'APP_DIRS': True,  # looks inside each app's 'templates/' folder
         'OPTIONS': {
             'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',  # needed for request in templates
+                'django.contrib.auth.context_processors.auth',  # needed for user
+                'django.contrib.messages.context_processors.messages',  # needed for messages
             ],
         },
     },
@@ -134,7 +141,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/accounts/login/"
 
 # Security settings for production
 if not DEBUG:
